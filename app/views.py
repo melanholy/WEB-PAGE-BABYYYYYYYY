@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, send_from_directory
+from flask import render_template, send_from_directory, redirect, url_for
 
 @app.after_request
 def apply_caching(response):
@@ -16,10 +16,7 @@ def style():
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(
-        app.static_folder, 'favicon.ico',
-        mimetype='image/vnd.microsoft.icon'
-    )
+    return redirect(url_for('static', filename='favicon.ico'))
 
 @app.errorhandler(404)
 def page_not_found(e):
