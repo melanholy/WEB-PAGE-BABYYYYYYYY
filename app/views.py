@@ -14,6 +14,13 @@ def robots():
 def style():
     return send_from_directory('templates', 'style.css')
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(
+        app.static_folder, 'favicon.ico',
+        mimetype='image/vnd.microsoft.icon'
+    )
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404

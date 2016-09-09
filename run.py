@@ -8,4 +8,3 @@ if __name__ == '__main__':
         app.run(debug=True, port=443, host='0.0.0.0', ssl_context=context)
     else:
         app.run(debug=True, port=443, host='0.0.0.0')
-    app.add_url_rule('/favicon.ico', redirect_to=url_for('static', filename='favicon.ico'))
