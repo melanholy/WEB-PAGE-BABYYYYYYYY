@@ -1,6 +1,12 @@
 from app import app
 from flask import render_template, send_from_directory
 
+@app.after_request
+def apply_caching(response):
+    print('lalal')
+    response.headers['Server'] = ''
+    return response
+
 @app.route('/robots.txt')
 def robots():
     return send_from_directory(app.static_folder, 'robots.txt')
