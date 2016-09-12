@@ -7,11 +7,13 @@
 </style>
 {% endblock %}
 {% block body %}
-<div class="centered">
-    <table>
-        <tr><td><h1>Страница не найдена</h1></td></tr>
-        <tr><td>То, что вы ищете, не здесь.</td></tr>
-        <tr><td><a href="{{ url_for('index') }}">Сходите куда-нибудь еще</a></td></tr>
-    </table>
-</div>
+    <div style="display: inline-block; width: 100%;">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6" style="text-align: center;">
+                <h1>Страница не найдена</h1><br>
+                То, что вы ищете, не здесь.<br>
+                <a href="{{ url_for('index') }}">Сходите куда-нибудь еще</a>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
 {% endblock %}
