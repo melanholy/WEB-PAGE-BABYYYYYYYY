@@ -142,3 +142,4 @@ db.cmd
 db
 *.crt
 *.key
+*.ca-bundle

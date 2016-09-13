@@ -29,8 +29,6 @@ def page_not_found(error):
 @app.route('/')
 @app.route('/index')
 def index():
-    print(current_user)
-    print(dir(current_user))
     return render_template('index.html')
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -79,10 +77,9 @@ def logout():
     logout_user()
     return redirect('/')
 
-@app.route('/user')
+@app.route('/user', methods=['POST', 'GET'])
 @login_required
 def user():
     form = EditFeedbackForm()
-    print(repr(form.text))
     feedback = mongo.db.feedback.find({'from': current_user.username})
     return render_template('user.html', feedback=feedback, form=form)
