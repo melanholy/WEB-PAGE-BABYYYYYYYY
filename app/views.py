@@ -1,8 +1,9 @@
-from app import app
+from app import app, mongo
 from app.models import User
-from app.forms import LoginForm, RegisterForm
+from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
 from flask import render_template, send_from_directory, redirect, url_for, request
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
+import datetime
 
 @app.after_request
 def hide_server(response):
@@ -28,6 +29,8 @@ def page_not_found(error):
 @app.route('/')
 @app.route('/index')
 def index():
+    print(current_user)
+    print(dir(current_user))
     return render_template('index.html')
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -50,13 +53,36 @@ def register():
 
     return render_template('register.html', form=form)
 
-@app.route('/feedback')
+@app.route('/leave_feedback', methods=['POST', 'GET'])
 @login_required
-def feedback():
-    return 'lala'
+def leave_feedback():
+    form = FeedbackForm(request.form)
+    if request.method == 'POST' and form.validate():
+        mongo.db.feedback.save({
+            'from': current_user.username,
+            'text': form.text.data,
+            'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+            'age': form.age.data
+        })
+        return redirect('/feedback')
 
-@app.route("/logout")
+    return render_template('leave_feedback.html', form=form)
+
+@app.route('/feedback')
+def feedback():
+    feedback = reversed([x for x in mongo.db.feedback.find()])
+    return render_template('feedback.html', feedback=feedback)
+
+@app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect('/')
+
+@app.route('/user')
+@login_required
+def user():
+    form = EditFeedbackForm()
+    print(repr(form.text))
+    feedback = mongo.db.feedback.find({'from': current_user.username})
+    return render_template('user.html', feedback=feedback, form=form)

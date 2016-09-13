@@ -15,7 +15,7 @@
 </head>
 <body>
     <div class="container">
-        <a style="text-decoration: none; color:#999;" href="/feedback">
+        <a style="text-decoration: none; color:#999;" href="/leave_feedback">
             <div class="some-button">Оставить отзыв</div>
         </a>
         <div class="header">
@@ -25,6 +25,12 @@
                 <a href="/images"><li class="menu-item">Картиночки</li></a>
                 <a href="/stuff"><li class="menu-item">Штуки</li></a>
                 <a href="/contacts"><li class="menu-item">Контакты</li></a>
+                {% if current_user.is_authenticated %}
+                    <a href="/user"><li class="menu-item">{{ current_user.username }}</li></a>
+                    <a href="/logout"><li class="menu-item" style="width: 35px;">[x]</li></a>
+                {% else %}
+                    <a href="/login"><li class="menu-item">Войти</li></a>
+                {% endif %}
             </ul>
         </div>
 

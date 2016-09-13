@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block body %}
+    {% if feedback %}
+        <ul>
+        {% for record in feedback %}
+            <li>
+                От: {{ record['from'] }}, {{ record['age'] }} годиков<br>
+                Дата: {{ record['date'] }}<br>
+                {{ record['text'] }}<br>
+                -----------------------
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        Пока здесь ничего нет.
+    {% endif %}
+{% endblock %}

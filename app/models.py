@@ -13,7 +13,7 @@ class User(UserMixin):
         if not user:
             return False
 
-        stored_hash = bytes(user['password'], 'utf-8')
+        stored_hash = user['password']
         return bcrypt.hashpw(bytes(password, 'utf-8'), stored_hash) == stored_hash
 
     @staticmethod
