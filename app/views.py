@@ -24,12 +24,12 @@ def favicon():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('404.html'), 404
+    return render_template('404.html', title='Четыреста четыре'), 404
 
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', title='Обо мне',)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -40,7 +40,7 @@ def login():
             login_user(user)
             return request.args.get('next') or redirect('/')
 
-    return render_template('login.html', form=form)
+    return render_template('login.html', title='Вход', form=form)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -49,7 +49,7 @@ def register():
         if User.register_user(form.username.data, form.password.data):
             return redirect('/login')
 
-    return render_template('register.html', form=form)
+    return render_template('register.html', title='Регистрация', form=form)
 
 @app.route('/leave_feedback', methods=['POST', 'GET'])
 @login_required
@@ -64,12 +64,12 @@ def leave_feedback():
         })
         return redirect('/feedback')
 
-    return render_template('leave_feedback.html', form=form)
+    return render_template('leave_feedback.html', title='Оставить отзыв', form=form)
 
 @app.route('/feedback')
 def feedback():
     feedback = reversed([x for x in mongo.db.feedback.find()])
-    return render_template('feedback.html', feedback=feedback)
+    return render_template('feedback.html', title='Отзывы', feedback=feedback)
 
 @app.route('/logout')
 @login_required
@@ -82,4 +82,4 @@ def logout():
 def user():
     form = EditFeedbackForm()
     feedback = mongo.db.feedback.find({'from': current_user.username})
-    return render_template('user.html', feedback=feedback, form=form)
+    return render_template('user.html', title='Настройки', feedback=feedback, form=form)

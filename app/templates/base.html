@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,21 +15,21 @@
 </head>
 <body>
     <div class="container">
-        <a style="text-decoration: none; color:#999;" href="/leave_feedback">
+        <a href="/leave_feedback">
             <div class="some-button">Оставить отзыв</div>
         </a>
         <div class="header">
             <ul class="navbar-left">
-                <a href="/"><li class="menu-item">Обо мне</li></a>
-                <a href="/skills"><li class="menu-item">Навыки</li></a>
-                <a href="/images"><li class="menu-item">Картиночки</li></a>
-                <a href="/stuff"><li class="menu-item">Штуки</li></a>
-                <a href="/contacts"><li class="menu-item">Контакты</li></a>
+                <li class="menu-item"><a href="/">Обо мне</a></li>
+                <li class="menu-item"><a href="/skills">Навыки</a></li>
+                <li class="menu-item"><a href="/images">Картиночки</a></li>
+                <li class="menu-item"><a href="/stuff">Штуки</a></li>
+                <li class="menu-item"><a href="/contacts">Контакты</a></li>
                 {% if current_user.is_authenticated %}
-                    <a href="/user"><li class="menu-item">{{ current_user.username }}</li></a>
-                    <a href="/logout"><li class="menu-item" style="width: 35px;">[x]</li></a>
+                    <li class="menu-item"><a href="/user">{{ current_user.username }}</a></li>
+                    <li class="menu-item" style="width: 35px;"><a href="/logout">[x]</a></li>
                 {% else %}
-                    <a href="/login"><li class="menu-item">Войти</li></a>
+                    <li class="menu-item"><a href="/login">Войти</a></li>
                 {% endif %}
             </ul>
         </div>

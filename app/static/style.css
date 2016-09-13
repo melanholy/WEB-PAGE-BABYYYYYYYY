@@ -17,12 +17,11 @@ body {
     position: absolute;
     top: 10px;
     right: 0px;
-    padding: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 5px 10px;
     font-size: 9px;
     background: #333;
     border: 1px solid #444;
+    border-right: none;
 }
 .header {
     overflow: hidden;
@@ -31,28 +30,32 @@ body {
     margin-bottom: 15px;
     margin-top: 24px;
 }
+@media(max-width:767px){
+    .header {
+        margin-top: 38px;
+    }
+}
 .header ul {
-    padding-right: 15px;
-    padding-left: 4px;
+    padding: 0px 15px 0px 4px;
 }
 .menu-item {
-    border: 1px solid #444;
-    padding: 2px 0px;
     text-align: center;
     display: inline-block;
     margin-left: -5px;
     width: 128px;
 }
-.header ul li:hover {
+.header ul li a:hover {
     background: #292929;
+}
+.header ul li a {
+    display: block;
+    padding: 2px 0px;
+    border: 1px solid #444;
 }
 .content {
     background: #232323;
     border: 1px solid #444;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 15px;
-    padding-bottom: 20px;
+    padding: 15px 10px 20px 10px;
 }
 .centered {
     position: fixed;
@@ -66,6 +69,10 @@ input, textarea {
     border: 1px solid #444;
     color: #888;
     padding: 2px;
+    border-radius: 0;
+}
+input[type=submit]:focus {
+    outline: none;
 }
 a:focus {
     color: #999;

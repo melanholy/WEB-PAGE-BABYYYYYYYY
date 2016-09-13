@@ -1,29 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-<style type="text/css">
-    .input-group {
-        margin-bottom: 5px;
-        width: 100%;
-    }
-    .form-control, .input-group-addon {
-        padding: 2px;
-        font-size: 10px;
-        border: 1px solid #444;
-        color: #888;
-        border-radius: 0;
-        height: 26px;
-    }
-    .form-control {
-        background: #222;
-        border-right: none;
-    }
-    .input-group-addon {
-        width: 110px;
-        background: #292929;
-        text-align: left;
-        padding-left: 5px;
-    }
-</style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form_style.css') }}">
 {% endblock %}
 {% block body %}
 <div style="display: inline-block; width: 100%;">
@@ -42,7 +19,7 @@
             </div>
             <input type="submit" value="Войти" style="width: 100%; margin-bottom: 5px; cursor: default" >
         </form>
-        <span style="font-size: 10px;">Забыли пароль? Очень плохо.</span>
+        <span style="font-size: 10px;" class="pull-left">Забыли пароль? Очень плохо.</span>
         <span style="font-size: 10px;" class="pull-right"><a href="/register">Регистрация</a></span>
     </div>
     <div class="col-sm-4"></div>
