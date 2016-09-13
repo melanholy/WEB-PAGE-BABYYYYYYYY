@@ -10,7 +10,7 @@
         <form action="/leave_feedback" method="POST">
             {{ form.csrf_token }}
             <div class="input-group">
-                {{ form.age(class_='form-control') }}<br>
+                {{ form.age(class_='form-control', pattern='\d+{1, 3}', title='От одной до 3 цифр') }}<br>
                 <span class="input-group-addon">Ваш возраст</span>
             </div>
             <div class="input-group">

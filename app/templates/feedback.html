@@ -5,7 +5,7 @@
         {% for record in feedback %}
             <li>
                 От: {{ record['from'] }}, {{ record['age'] }} годиков<br>
-                Дата: {{ record['date'] }}<br>
+                Дата: {{ record['date'] }} UTC<br>
                 {{ record['text'] }}<br>
                 -----------------------
             </li>

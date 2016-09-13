@@ -5,6 +5,7 @@ body {
     color: #999;
     font-family: Verdana;
     font-size: 9pt;
+    background: #222;
     background: linear-gradient(to bottom, #222, #282828);
 }
 .footer {
