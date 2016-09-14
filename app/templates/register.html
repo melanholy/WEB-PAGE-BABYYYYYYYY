@@ -13,9 +13,9 @@
         <span style="font-size: 10px;">Регистрация:</span>
         <form action="/register" method="POST">
             {{ form.csrf_token }}
-            {{ macros.input(form.username(class_='form-control'), 'Имя') }}
-            {{ macros.input(form.password(class_='form-control'), 'Пароль') }}
-            {{ macros.input(form.confirm(class_='form-control'), 'Повторите пароль') }}
+            {{ macros.input(form.username(class_='form-control', pattern='.{1,25}', title='От одного до 25 символов', required=True), 'Имя') }}
+            {{ macros.input(form.password(class_='form-control', required=True), 'Пароль') }}
+            {{ macros.input(form.confirm(class_='form-control', required=True), 'Повторите пароль') }}
             <input type="submit" value="Зарегистрироваться">
         </form>
     </div>

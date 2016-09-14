@@ -7,6 +7,8 @@ from wtforms.widgets import HTMLString, html_params
 from html import escape
 from wtforms.compat import text_type
 
+FIELD_REQUIRED_MSG = 'Обязательное поле'
+
 class TextArea(object):
     """
     Renders a multi-line text area.
@@ -33,9 +35,12 @@ class LoginForm(Form):
         def csrf_context(self):
             return session
 
-    username = StringField('Username', [validators.Length(min=4, max=25)])
+    username = StringField('Username', [
+        validators.Length(min=1, max=25),
+        validators.DataRequired(message=FIELD_REQUIRED_MSG)
+    ])
     password = PasswordField('Password', [
-        validators.DataRequired()
+        validators.DataRequired(message=FIELD_REQUIRED_MSG)
     ])
 
 class RegisterForm(Form):
@@ -48,12 +53,17 @@ class RegisterForm(Form):
         def csrf_context(self):
             return session
 
-    username = StringField('Username', [validators.Length(min=4, max=25)])
-    password = PasswordField('Password', [
-        validators.DataRequired(),
-        validators.EqualTo('confirm', message='Passwords must match')
+    username = StringField('Username', [
+        validators.Length(min=1, max=25),
+        validators.DataRequired(message=FIELD_REQUIRED_MSG)
     ])
-    confirm = PasswordField('Repeat Password')
+    password = PasswordField('Password', [
+        validators.DataRequired(message=FIELD_REQUIRED_MSG),
+        validators.EqualTo('confirm', message='Пароли должны совпадать')
+    ])
+    confirm = PasswordField('Repeat Password', [
+        validators.DataRequired(message=FIELD_REQUIRED_MSG)
+    ])
 
 class FeedbackForm(Form):
     class Meta:
@@ -65,8 +75,15 @@ class FeedbackForm(Form):
         def csrf_context(self):
             return session
 
-    age = IntegerField('Age', [validators.DataRequired(), validators.NumberRange(min=1, max=130)])
-    text = StringField('Text', [validators.DataRequired()], widget=TextArea())
+    age = IntegerField('Age', [
+        validators.DataRequired(message=FIELD_REQUIRED_MSG),
+        validators.NumberRange(min=1, max=999)
+    ])
+    text = StringField(
+        'Text',
+        [validators.DataRequired(message=FIELD_REQUIRED_MSG)],
+        widget=TextArea()
+    )
 
 class EditFeedbackForm(Form):
     class Meta:
@@ -79,4 +96,8 @@ class EditFeedbackForm(Form):
             return session
 
     id_ = HiddenField('Id')
-    text = StringField('Text', [validators.DataRequired()], widget=TextArea())
+    text = StringField(
+        'Text',
+        [validators.DataRequired(message=FIELD_REQUIRED_MSG)],
+        widget=TextArea()
+    )
