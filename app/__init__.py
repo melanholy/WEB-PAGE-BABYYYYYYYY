@@ -9,6 +9,7 @@ app.config.from_object('config')
 
 login_manager = LoginManager(app)
 login_manager.login_view = '/login'
+login_manager.login_message = 'Пожалуйста, войдите для доступа к этой странице.'
 
 mongo = PyMongo(app)
 

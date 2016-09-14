@@ -1,23 +1,21 @@
 {% extends "base.html" %}
+{% import 'macros.html' as macros %}
+
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form_style.css') }}">
 {% endblock %}
+
 {% block body %}
 <div style="display: inline-block; width: 100%;">
     <div class="col-sm-4"></div>
     <div class="col-sm-4">
+        {{ macros.flashes(form) }}
         <span style="font-size: 10px;">Вход:</span>
         <form action="/login" method="POST">
             {{ form.csrf_token }}
-            <div class="input-group">
-                {{ form.username(class_='form-control') }}<br>
-                <span class="input-group-addon">Имя пользователя</span>
-            </div>
-            <div class="input-group">
-                {{ form.password(class_='form-control') }}<br>
-                <span class="input-group-addon">Пароль</span>
-            </div>
-            <input type="submit" value="Войти" style="width: 100%; margin-bottom: 5px; cursor: default" >
+            {{ macros.input(form.username(class_='form-control'), 'Имя') }}
+            {{ macros.input(form.password(class_='form-control'), 'Пароль') }}
+            <input type="submit" value="Войти">
         </form>
         <span style="font-size: 10px;" class="pull-left">Забыли пароль? Очень плохо.</span>
         <span style="font-size: 10px;" class="pull-right"><a href="/register">Регистрация</a></span>

@@ -1,0 +1,25 @@
+{% macro input(input_text, label) -%}
+    <div class="input-group">
+        {{ input_text }}
+        <span class="input-group-addon">{{ label }}</span>
+    </div>
+{%- endmacro %}
+
+{% macro flashes(form) -%}
+    {% with messages = get_flashed_messages() %}
+        {% if messages or form.csrf_token.errors or form.errors %}
+            <ul class=flashes>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            {% if form.errors %}
+                {% for errors in form.errors.values() %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+{%- endmacro %}

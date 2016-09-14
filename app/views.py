@@ -1,7 +1,8 @@
 from app import app, mongo
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
-from flask import render_template, send_from_directory, redirect, url_for, request
+from flask import render_template, send_from_directory, redirect, url_for, request, \
+                  flash
 from flask_login import login_required, login_user, logout_user, current_user
 import datetime
 
@@ -39,6 +40,7 @@ def login():
         if user.validate(form.password.data):
             login_user(user)
             return request.args.get('next') or redirect('/')
+        flash('Неверный логин или пароль.')
 
     return render_template('login.html', title='Вход', form=form)
 
@@ -48,6 +50,7 @@ def register():
     if request.method == 'POST' and form.validate():
         if User.register_user(form.username.data, form.password.data):
             return redirect('/login')
+        flash('Пользователь с таким именем уже зарегистрирован.')
 
     return render_template('register.html', title='Регистрация', form=form)
 

@@ -65,7 +65,7 @@ class FeedbackForm(Form):
         def csrf_context(self):
             return session
 
-    age = IntegerField('Age', [validators.DataRequired(), validators.Length(min=1, max=3)])
+    age = IntegerField('Age', [validators.DataRequired(), validators.NumberRange(min=1, max=130)])
     text = StringField('Text', [validators.DataRequired()], widget=TextArea())
 
 class EditFeedbackForm(Form):
