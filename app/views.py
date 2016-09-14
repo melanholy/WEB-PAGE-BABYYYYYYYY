@@ -6,8 +6,19 @@ from flask import render_template, send_from_directory, redirect, url_for, reque
 from flask_login import login_required, login_user, logout_user, current_user
 import datetime
 
+SITE_PAGES = {'index', 'stuff', 'images', 'contacts', 'skills'}
+
 @app.after_request
-def hide_server(response):
+def after_request(response):
+    if not request.path.startswith('/static'):
+        if current_user is User:
+            user = current_user.username
+        
+        mongo.db.requests.save({
+            'time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+            'address': request.remote_addr,
+            'path': request.path
+        })
     response.headers['Server'] = ''
     return response
 
@@ -30,6 +41,8 @@ def page_not_found(error):
 @app.route('/')
 @app.route('/index')
 def index():
+    if request.path == '/':
+        return redirect('/index')
     return render_template('index.html', title='Обо мне',)
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -54,24 +67,29 @@ def register():
 
     return render_template('register.html', title='Регистрация', form=form)
 
-@app.route('/leave_feedback', methods=['POST', 'GET'])
+@app.route('/leave_feedback/<page>', methods=['POST', 'GET'])
 @login_required
-def leave_feedback():
+def leave_feedback(page):
+    if page not in SITE_PAGES:
+        return render_template('404.html', title='Четыреста четыре'), 404
     form = FeedbackForm(request.form)
     if request.method == 'POST' and form.validate():
         mongo.db.feedback.save({
+            'page': page,
             'from': current_user.username,
             'text': form.text.data,
             'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
             'age': form.age.data
         })
-        return redirect('/feedback')
+        return redirect('/feedback/' + page)
 
     return render_template('leave_feedback.html', title='Оставить отзыв', form=form)
 
-@app.route('/feedback')
-def feedback():
-    feedback = reversed([x for x in mongo.db.feedback.find()])
+@app.route('/feedback/<page>')
+def feedback(page):
+    if page not in SITE_PAGES:
+        return render_template('404.html', title='Четыреста четыре'), 404
+    feedback = [x for x in mongo.db.feedback.find({'page': page}, sort=[('$natural', -1)])]
     return render_template('feedback.html', title='Отзывы', feedback=feedback)
 
 @app.route('/logout')
@@ -86,3 +104,8 @@ def user():
     form = EditFeedbackForm()
     feedback = mongo.db.feedback.find({'from': current_user.username})
     return render_template('user.html', title='Настройки', feedback=feedback, form=form)
+
+@app.route('/stuff')
+def stuff():
+    requests = mongo.db.requests.find()
+    return render_template('stuff.html', title='Штуки', requests=requests)

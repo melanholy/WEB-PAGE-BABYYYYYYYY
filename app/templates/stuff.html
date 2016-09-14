@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block head %}
+<style type="text/css">
+    tr {
+        text-align: center;
+    }
+</style>
+{% endblock %}
+{% block body %}
+    <ul>
+    {% for request in requests %}
+        <li>
+            {{ request.address }}<br>
+            {{ request.path }}<br>
+            {{ request.time }}
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

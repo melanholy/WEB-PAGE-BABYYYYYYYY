@@ -14,7 +14,7 @@ class User(UserMixin):
             return False
 
         stored_hash = user['password']
-        return bcrypt.hashpw(bytes(password, 'utf-8'), stored_hash) == stored_hash
+        return bcrypt.hashpw(password, stored_hash) == stored_hash
 
     @staticmethod
     def get_by_id(id_):
@@ -30,6 +30,6 @@ class User(UserMixin):
 
         mongo.db.users.save({
             'username': username,
-            'password': bcrypt.hashpw(bytes(password, 'utf-8'), bcrypt.gensalt(10))
+            'password': bcrypt.hashpw(password, bcrypt.gensalt(10))
         })
         return True
