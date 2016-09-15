@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block head %}
+	<script type="text/javascript" src="{{ url_for('static', filename='gallery.js') }}"></script>
+{% endblock %}
+{% block body %}
+	<div id="image-big-div" style="z-index: 2; position: relative; display: none;">
+		<img id="image-big" src="" data-id="" style="position: absolute;" onclick="shrinkImage()" width="500px" height="500px">
+	</div>
+{% for i in range(images|length ) %}
+	<img onclick="expandImage('{{ i }}')" class="col-sm-2 gal-img" src="{{ images[i] }}" id="{{ i }}">
+{% endfor %}
+<div style="clear: both;"></div>
+{% endblock %}

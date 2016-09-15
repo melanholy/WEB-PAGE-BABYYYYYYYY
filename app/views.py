@@ -1,10 +1,11 @@
 import datetime
 import time
+import os
 from app import app, mongo
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
 from flask import render_template as jinja_render, send_from_directory, redirect, request, \
-                  flash
+                  flash, send_file
 from flask_login import login_required, login_user, logout_user, current_user
 
 SITE_PAGES = {'index', 'stuff', 'images', 'contacts', 'skills'}
@@ -126,3 +127,26 @@ def user_page():
 def stuff():
     requests = mongo.db.requests.find()
     return render_template('stuff.html', title='Штуки', requests=requests)
+
+@app.route('/images/<image>')
+def image(image):
+    path = os.path.abspath('app/images/' + image)
+    if not os.path.isfile(path):
+        return render_template('404.html', title='Четыреста четыре'), 404
+    return send_file(path, mimetype='image/jpeg')
+
+@app.route('/gallery/<img_id>')
+def gallery_big_img(img_id):
+    images = ['/images/' + x for x in os.listdir('app/images')]
+    return render_template(
+        'gallery.html', title='Картиночки',
+        images=images, current=img_id
+    )
+
+@app.route('/gallery')
+def gallery():
+    images = ['/images/' + x for x in os.listdir('app/images')]
+    return render_template(
+        'gallery.html', title='Картиночки',
+        images=images, current=None
+    )

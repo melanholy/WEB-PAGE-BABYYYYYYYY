@@ -18,10 +18,19 @@ body {
 .header {
     margin-bottom: 10px;
 }
+.gal-img {
+    border: 1px solid #444;
+    margin: 3px;
+    padding: 0px;
+    cursor: pointer;
+    z-index: 1;
+    position: relative;
+}
 .visits {
     font-size: 9px;
     padding: 5px 0px 5px 0px;
-    display: block;
+    display: inline-block;
+    word-wrap: nowrap;
 }
 @media(max-width:876px){
     .header {
@@ -49,6 +58,7 @@ body {
     background: #232323;
     border: 1px solid #444;
     padding: 15px 10px 20px 10px;
+    display: block;
 }
 .centered {
     position: fixed;
