@@ -21,26 +21,26 @@
     </style>
 {% endblock %}
 {% block body %}
-    Тут можно отредактировать оставленные вами отзывы.
-    {% for record in feedback %}
-        <div style="border: 1px solid #444; margin-bottom: 9px;">
-            <a class="no-highlight" data-toggle="collapse" href="#collapse{{ loop.index }}">
-                <div class="panel-head">
-                    <strong>{{ record['date'] }}</strong><br>
-                    {{ record['text'][:100] }}
-                </div>
-            </a>
-            <div id="collapse{{ loop.index }}" class="collapse">
-                <form method="POST" action="/user">
-                    {{ form.csrf_token }}
-                    {{ form.id_(value=record['_id'], hidden='true') }}
-                    <div class="input-group">
-                        {{ form.text(class_='form-control', data=record['text']) }}<br>
-                        <span class="input-group-addon">Новый текст</span>
-                    </div>
-                    <input type="submit" value="Подтвердить" style="margin: 5px; width: 100px; cursor: default" >
-                </form>
+Тут можно отредактировать оставленные вами отзывы.
+{% for record in feedback %}
+    <div style="border: 1px solid #444; margin-bottom: 9px;">
+        <a class="no-highlight" data-toggle="collapse" href="#collapse{{ loop.index }}">
+            <div class="panel-head">
+                <strong>{{ record['date'] }}</strong><br>
+                {{ record['text'][:100] }}
             </div>
+        </a>
+        <div id="collapse{{ loop.index }}" class="collapse">
+            <form method="POST" action="/user">
+                {{ form.csrf_token }}
+                {{ form.id_(value=record['_id'], hidden='true') }}
+                <div class="input-group">
+                    {{ form.text(class_='form-control', data=record['text']) }}<br>
+                    <span class="input-group-addon">Новый текст</span>
+                </div>
+                <input type="submit" value="Подтвердить" style="margin: 5px; width: 100px; cursor: default" >
+            </form>
         </div>
-    {% endfor %}
+    </div>
+{% endfor %}
 {% endblock %}

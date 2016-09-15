@@ -1,38 +1,55 @@
+import datetime
+import time
 from app import app, mongo
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
-from flask import render_template, send_from_directory, redirect, url_for, request, \
+from flask import render_template as jinja_render, send_from_directory, redirect, request, \
                   flash
 from flask_login import login_required, login_user, logout_user, current_user
-import datetime
 
 SITE_PAGES = {'index', 'stuff', 'images', 'contacts', 'skills'}
 
+def render_template(*args, **kwargs):
+    now = datetime.datetime.now()
+    beginning_of_day = datetime.datetime.combine(now.date(), datetime.time(0))
+    passed_today = (now - beginning_of_day).seconds
+    visits_today = mongo.db.requests.find({
+        'address': request.remote_addr,
+        'time': {'$gt': time.time() - passed_today}
+    }).count()
+    visits_total = mongo.db.requests.find().count()
+    last_visit = mongo.db.requests.find_one({
+        'address': request.remote_addr,
+        'path': request.path,
+    }, sort=[('$natural', -1)])
+    if last_visit:
+        last_visit = datetime.datetime.fromtimestamp(
+            last_visit['time']
+        ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
+    else:
+        last_visit = 'не было'
+    return jinja_render(
+        *args, **kwargs,
+        visits_today=visits_today,
+        last_visit=last_visit,
+        visits_total=visits_total,
+        time=time.time()
+    )
+
 @app.after_request
 def after_request(response):
-    if not request.path.startswith('/static'):
-        if current_user is User:
-            user = current_user.username
-        
-        mongo.db.requests.save({
-            'time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-            'address': request.remote_addr,
-            'path': request.path
-        })
-    response.headers['Server'] = ''
+    mongo.db.requests.save({
+        'time': int(time.time()),
+        'address': request.remote_addr,
+        'path': request.path
+    })
+
+    response.headers['Server'] = 'SUPA-DUPA-SERVAH'
     return response
 
 @app.route('/robots.txt')
 def robots():
     return send_from_directory(app.static_folder, 'robots.txt')
-
-@app.route('/css/style.css')
-def style():
-    return send_from_directory('templates', 'style.css')
-
-@app.route('/favicon.ico')
-def favicon():
-    return redirect(url_for('static', filename='favicon.ico'))
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -89,8 +106,8 @@ def leave_feedback(page):
 def feedback(page):
     if page not in SITE_PAGES:
         return render_template('404.html', title='Четыреста четыре'), 404
-    feedback = [x for x in mongo.db.feedback.find({'page': page}, sort=[('$natural', -1)])]
-    return render_template('feedback.html', title='Отзывы', feedback=feedback)
+    records = [x for x in mongo.db.feedback.find({'page': page}, sort=[('$natural', -1)])]
+    return render_template('feedback.html', title='Отзывы', feedback=records)
 
 @app.route('/logout')
 @login_required
@@ -100,10 +117,10 @@ def logout():
 
 @app.route('/user', methods=['POST', 'GET'])
 @login_required
-def user():
+def user_page():
     form = EditFeedbackForm()
-    feedback = mongo.db.feedback.find({'from': current_user.username})
-    return render_template('user.html', title='Настройки', feedback=feedback, form=form)
+    cursor = mongo.db.feedback.find({'from': current_user.username})
+    return render_template('user.html', title='Настройки', feedback=cursor, form=form)
 
 @app.route('/stuff')
 def stuff():

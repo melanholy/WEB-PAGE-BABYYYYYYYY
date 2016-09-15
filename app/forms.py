@@ -1,10 +1,10 @@
+from html import escape
 from app import app
 from flask import session
 from wtforms import Form, StringField, PasswordField, IntegerField, \
                     HiddenField, validators
 from wtforms.csrf.session import SessionCSRF
 from wtforms.widgets import HTMLString, html_params
-from html import escape
 from wtforms.compat import text_type
 
 FIELD_REQUIRED_MSG = 'Обязательное поле'

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-	<meta charset="utf-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>{{ title }}</title>
+    <title>{{ title }}</title>
     <script type="text/javascript" src="/static/scripts.js"></script>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -12,9 +12,9 @@
     {% endblock %}
 </head>
 <body>
-    <div>
     <nav class="header">
         <div class="container">
+            <span class="visits">Всего визитов: {{ visits_total }} | Визитов сегодня: {{ visits_today }} | Последнее посещение этой страницы: {{ last_visit }}</span>
             <ul class="navbar-left">
                 <li class="menu-item"><a href="/">Обо мне</a></li>
                 <li class="menu-item"><a href="/skills">Навыки</a></li>
@@ -22,30 +22,24 @@
                 <li class="menu-item"><a href="/stuff">Штуки</a></li>
                 <li class="menu-item"><a href="/contacts">Контакты</a></li>
                 {% if current_user.is_authenticated %}
-                    <li class="menu-item"><a href="/user">{{ current_user.username }}</a></li>
-                    <li class="menu-item" style="width: 35px;"><a href="/logout">[x]</a></li>
+                <li class="menu-item"><a href="/user">{{ current_user.username }}</a></li>
+                <li class="menu-item" style="width: 35px;"><a href="/logout">[x]</a></li>
                 {% else %}
-                    <li class="menu-item"><a href="/login">Войти</a></li>
+                <li class="menu-item"><a href="/login">Войти</a></li>
                 {% endif %}
             </ul>
         </div>
-    </div>
+    </nav>
     <div class="container">
         {% if request.path in ['/index', '/stuff', '/images', '/contacts', '/skills'] %}
-            <a href="/leave_feedback{{ request.path }}">
-                <div class="some-button">Оставить отзыв о странице</div>
-            </a>
+        <a href="/leave_feedback{{ request.path }}">
+            <div class="some-button">Оставить отзыв о странице</div>
+        </a>
         {% endif %}
         <div class="content">
-        	{% block body %}
-        	{% endblock %}
+        {% block body %}
+        {% endblock %}
         </div>
-    </div>
-    <footer class="footer navbar-fixed-bottom">
-      <div class="container">
-        <span>lalala</span>
-      </div>
-    </footer>
     </div>
 </body>
 </html>

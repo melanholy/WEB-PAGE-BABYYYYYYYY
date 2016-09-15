@@ -1,8 +1,7 @@
-
 from flask import Flask
-from flask_sslify import SSLify
 from flask_login import LoginManager
 from flask_pymongo import PyMongo
+from flask_compress import Compress
 
 app = Flask(__name__, static_folder='static')
 app.config.from_object('config')
@@ -13,7 +12,7 @@ login_manager.login_message = 'Пожалуйста, войдите для до�
 
 mongo = PyMongo(app)
 
-sslify = SSLify(app)
+Compress(app)
 
 from app.models import User
 

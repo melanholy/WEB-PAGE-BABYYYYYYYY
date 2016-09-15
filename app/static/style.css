@@ -16,10 +16,14 @@ body {
     border-right: none;
 }
 .header {
-    margin-bottom: 25px;
-    margin-top: 24px;
+    margin-bottom: 10px;
 }
-@media(max-width:767px){
+.visits {
+    font-size: 9px;
+    padding: 5px 0px 5px 0px;
+    display: block;
+}
+@media(max-width:876px){
     .header {
         margin-top: 38px;
     }
