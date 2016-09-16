@@ -5,7 +5,7 @@ from app import app, mongo
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
 from flask import render_template as jinja_render, send_from_directory, redirect, request, \
-                  flash, send_file
+                  flash, send_file, jsonify
 from flask_login import login_required, login_user, logout_user, current_user
 
 SITE_PAGES = {'index', 'stuff', 'images', 'contacts', 'skills'}
@@ -125,7 +125,7 @@ def user_page():
 
 @app.route('/stuff')
 def stuff():
-    requests = mongo.db.requests.find()
+    requests = [x for x in mongo.db.requests.find()]
     return render_template('stuff.html', title='Штуки', requests=requests)
 
 @app.route('/images/<image>')
@@ -136,17 +136,42 @@ def image(image):
     return send_file(path, mimetype='image/jpeg')
 
 @app.route('/gallery/<img_id>')
-def gallery_big_img(img_id):
+@app.route('/gallery')
+def gallery(img_id = None):
     images = ['/images/' + x for x in os.listdir('app/images')]
+    form = EditFeedbackForm()
     return render_template(
         'gallery.html', title='Картиночки',
-        images=images, current=img_id
+        images=images, form=form
     )
 
-@app.route('/gallery')
-def gallery():
-    images = ['/images/' + x for x in os.listdir('app/images')]
-    return render_template(
-        'gallery.html', title='Картиночки',
-        images=images, current=None
-    )
+@app.route('/comments')
+def load_comments():
+    if not 'filename' in request.args:
+        return 'атата'
+    picture = request.args['filename']
+    comments = mongo.db.comments.find_one({'filename': picture})
+    if not comments:
+        return jsonify([])
+
+    return jsonify(comments['comments'])
+
+@app.route('/comment', methods=['POST'])
+def comment():
+    form = EditFeedbackForm()
+    if form.validate_on_submit():
+        if not mongo.db.comments.find_one({'filename': form.id_.data}):
+            path = os.path.abspath('app/images/' + form.id_.data)
+            if not os.path.isfile(path):
+                return 'атата'
+            else:
+                mongo.db.comments.save({'filename': form.id_.data, 'comments': []})
+        cur_time = datetime.datetime.fromtimestamp(
+            time.time()
+        ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
+        mongo.db.comments.update(
+            {'filename': form.id_.data},
+            {'$push': {'comments': {'date': cur_time, 'text': form.text.data, 'author': current_user.username}}}
+        )
+        return 'ok'
+    return 'атата'

@@ -2,6 +2,7 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_pymongo import PyMongo
 from flask_compress import Compress
+from flask_wtf import CsrfProtect
 
 app = Flask(__name__, static_folder='static')
 app.config.from_object('config')
@@ -11,6 +12,8 @@ login_manager.login_view = '/login'
 login_manager.login_message = 'Пожалуйста, войдите для доступа к этой странице.'
 
 mongo = PyMongo(app)
+
+CsrfProtect(app)
 
 Compress(app)
 

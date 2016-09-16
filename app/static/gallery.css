@@ -11,13 +11,13 @@
     cursor: pointer;
 }
 #image-big-div {
-    top: 100px;
     z-index: 999;
     position: fixed;
     display: none;
     padding: 0px;
+    top: 100px;
 }
-@media(max-width:768px){
+@media(max-width:991px){
     #image-big-div {
         top: 40px;
     }
@@ -42,9 +42,60 @@
 #cross:hover {
     opacity: 1;
 }
-#comments {
+#comments-div {
     background: linear-gradient(to bottom, #222, #282828) fixed;
     display: inline-block;
+    padding: 0px;
+}
+#comments {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 80%;
     padding: 5px;
+}
+p {
+    margin: 0px;
+}
+.author {
+    font-weight: bold;
+}
+.com-date {
+    font-size: 9px;
+}
+hr {
+    border-color: #444;
+    margin: 15px 0px 15px 0px;
+}
+button, textarea {
+    background: #222;
+    border: 1px solid #444;
+    padding: 2px;
+    font-size: 10px;
+    color: #888;
+    border-radius: 0;
+    width: 100%;
+    margin: 0px;
+}
+button {
+    cursor: default;
+}
+button:focus {
+    outline: none;
+}
+.msb::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+.msb::-webkit-scrollbar {
+    width: 7px;
+    background-color: transparent;
+}
+.msb::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 3px;
+}
+.msb::-webkit-scrollbar-thumb:hover {
+    background-color: #777;
+}
+.modal {
     overflow-y: auto;
 }

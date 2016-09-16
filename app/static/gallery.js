@@ -1,23 +1,12 @@
 function expandImage(id) {
-    var el = document.getElementById('image-big');
-    href = document.getElementById(id).getAttribute('src');
-    el.setAttribute('src', href);
-    el.setAttribute('data-id', id);
-
-    var hids = document.getElementsByClassName('hid');
-    for (var i = 0; i < hids.length; i++) {
-        hids[i].style.display = 'block';
-    }
-
     window.history.pushState({}, "", '/' + 'gallery/' + id);
-    onResize();
+    setImage();
 }
 
 function shrinkImage() {
     var hids = document.getElementsByClassName('hid');
-    for (var i = 0; i < hids.length; i++) {
+    for (var i = 0; i < hids.length; i++)
         hids[i].style.display = 'none';
-    }
 
     window.history.pushState({}, "", '/gallery');
 }
@@ -25,7 +14,6 @@ function shrinkImage() {
 document.onkeydown = function(event) {
     var el = document.getElementById('image-big-div');
     if (el.style.display != 'none') {
-
         var el = document.getElementById('image-big');
         var next = 0;
         if (event.keyCode == 39)
@@ -38,41 +26,41 @@ document.onkeydown = function(event) {
         }
         else
             return;
-        var nextimg = document.getElementById(next);
-        if (nextimg == null) {
-            if (next > 0)
-                next = 0;
-            else
-                next = document.getElementsByClassName('gal-img').length - 1;
-            nextimg = document.getElementById(next);
-        }
+        pics_len = document.getElementsByClassName('gal-img').length;
+        if (next < 0)
+            next = pics_len - 1;
+        next = next % pics_len;
         window.history.pushState({}, "", '/gallery/' + next);
-        href = nextimg.getAttribute('src');
-        el.setAttribute('data-id', next);
-        el.setAttribute('src', href);
+        setImage();
     }
 }
 
 function setImage() {
-    var div = document.getElementById('image-big-div');
     var hids = document.getElementsByClassName('hid');
     if (document.location.toString().endsWith('gallery')) {
-        for (var i = 0; i < hids.length; i++) {
+        for (var i = 0; i < hids.length; i++)
             hids[i].style.display = 'none';
-        }
         return;
     }
-    else {
-        for (var i = 0; i < hids.length; i++) {
+    else
+        for (var i = 0; i < hids.length; i++)
             hids[i].style.display = 'block';
-        }
-    }
-    var id = document.location.toString().substring(document.location.toString().lastIndexOf('/') + 1);
+
+    var id = document.location.toString().substring(
+        document.location.toString().lastIndexOf('/') + 1
+    );
     var el = document.getElementById('image-big');
     var img = document.getElementById(id);
     href = img.getAttribute('src');
     el.setAttribute('data-id', id);
     el.setAttribute('src', href);
+
+    pic_name = href.substring(href.lastIndexOf('/') + 1);
+
+    document.getElementById('id_').setAttribute('value', pic_name);
+
+    getComments(pic_name);
+
     onResize();
 }
 
@@ -82,15 +70,17 @@ window.addEventListener('popstate', function(event) {
 
 function onResize() {
     var div = document.getElementById('image-big-div');
+    var com = document.getElementById('comments-div');
+    var pic = document.getElementById('image-big');
+    
     if (window.innerWidth > 992) {
-        var com = document.getElementById('comments');
-        var pic = document.getElementById('image-big');
-        
-        div.style.height = pic.height + 'px';
+        div.style.height = (pic.height + 1) + 'px';
         com.style.height = pic.height + 'px';
     }
-    else
+    else {
         div.style.height = null;
+        com.style.height = '500px';
+    }
 }
 
 window.addEventListener('resize', function(event){

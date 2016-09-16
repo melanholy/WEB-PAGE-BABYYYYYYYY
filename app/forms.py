@@ -1,8 +1,9 @@
 from html import escape
 from app import app
 from flask import session
-from wtforms import Form, StringField, PasswordField, IntegerField, \
+from wtforms import StringField, PasswordField, IntegerField, \
                     HiddenField, validators
+from flask_wtf import Form
 from wtforms.csrf.session import SessionCSRF
 from wtforms.widgets import HTMLString, html_params
 from wtforms.compat import text_type
@@ -26,15 +27,6 @@ class TextArea(object):
         ))
 
 class LoginForm(Form):
-    class Meta:
-        csrf = True
-        csrf_class = SessionCSRF
-        csrf_secret = app.config['CSRF_SECRET_KEY']
-
-        @property
-        def csrf_context(self):
-            return session
-
     username = StringField('Username', [
         validators.Length(min=1, max=25),
         validators.DataRequired(message=FIELD_REQUIRED_MSG)
@@ -44,15 +36,6 @@ class LoginForm(Form):
     ])
 
 class RegisterForm(Form):
-    class Meta:
-        csrf = True
-        csrf_class = SessionCSRF
-        csrf_secret = app.config['CSRF_SECRET_KEY']
-
-        @property
-        def csrf_context(self):
-            return session
-
     username = StringField('Username', [
         validators.Length(min=1, max=25),
         validators.DataRequired(message=FIELD_REQUIRED_MSG)
@@ -66,15 +49,6 @@ class RegisterForm(Form):
     ])
 
 class FeedbackForm(Form):
-    class Meta:
-        csrf = True
-        csrf_class = SessionCSRF
-        csrf_secret = app.config['CSRF_SECRET_KEY']
-
-        @property
-        def csrf_context(self):
-            return session
-
     age = IntegerField('Age', [
         validators.DataRequired(message=FIELD_REQUIRED_MSG),
         validators.NumberRange(min=1, max=999)
@@ -86,15 +60,6 @@ class FeedbackForm(Form):
     )
 
 class EditFeedbackForm(Form):
-    class Meta:
-        csrf = True
-        csrf_class = SessionCSRF
-        csrf_secret = app.config['CSRF_SECRET_KEY']
-
-        @property
-        def csrf_context(self):
-            return session
-
     id_ = HiddenField('Id')
     text = StringField(
         'Text',
