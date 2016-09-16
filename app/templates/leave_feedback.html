@@ -7,8 +7,7 @@
 
 {% block body %}
 <div style="display: inline-block; width: 100%;">
-    <div class="col-sm-4"></div>
-    <div class="col-sm-4">
+    <div class="col-lg-offset-4 col-lg-4 col-sm-offset-3 col-sm-6">
         {{ macros.flashes(form) }}
         <span style="font-size: 10px;">Оставить отзыв:</span>
         <form action="/leave_feedback/{{ request.path.split('/')[2] }}" method="POST">
@@ -19,6 +18,5 @@
         </form>
         <span style="font-size: 10px;" class="pull-right"><a href="/feedback/{{ request.path.split('/')[2] }}">Посмотреть все отзывы</a></span>
     </div>
-    <div class="col-sm-4"></div>
 </div>
 {% endblock %}

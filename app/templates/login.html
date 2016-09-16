@@ -7,8 +7,7 @@
 
 {% block body %}
 <div style="display: inline-block; width: 100%;">
-    <div class="col-sm-4"></div>
-    <div class="col-sm-4">
+    <div class="col-lg-offset-4 col-lg-4 col-sm-offset-3 col-sm-6">
         {{ macros.flashes(form) }}
         <span style="font-size: 10px;">Вход:</span>
         <form action="/login" method="POST">
@@ -20,6 +19,5 @@
         <span style="font-size: 10px;" class="pull-left">Забыли пароль? Очень плохо.</span>
         <span style="font-size: 10px;" class="pull-right"><a href="/register">Регистрация</a></span>
     </div>
-    <div class="col-sm-4"></div>
 </div>
 {% endblock %}

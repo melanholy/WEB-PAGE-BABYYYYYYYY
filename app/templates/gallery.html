@@ -1,13 +1,25 @@
 {% extends "base.html" %}
+
 {% block head %}
 	<script type="text/javascript" src="{{ url_for('static', filename='gallery.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='gallery.css') }}">
 {% endblock %}
+
 {% block body %}
-	<div id="image-big-div" style="z-index: 2; position: relative; display: none;">
-		<img id="image-big" src="" data-id="" style="position: absolute;" onclick="shrinkImage()" width="500px" height="500px">
-	</div>
+<div class="hid" id="shade" onclick="shrinkImage()"></div>
+<img src="{{ url_for('static', filename='cross.png') }}" class="hid" id="cross">
+<div class="modal modal-dialog modal-lg hid" id="image-big-div">
+    <div class="modal-content">
+        <img class="img-responsive col-sm-12 col-xs-12 col-md-8" id="image-big" style="padding: 0px;">
+    <div class="col-sm-12 col-xs-12 col-md-4" id="comments">
+        <p class="text-center">Комментарии</p>
+    </div>
+    </div>
+</div>
 {% for i in range(images|length ) %}
-	<img onclick="expandImage('{{ i }}')" class="col-sm-2 gal-img" src="{{ images[i] }}" id="{{ i }}">
+    <div class="col-md-2 col-sm-3 col-xs-4">
+	<img onclick="expandImage('{{ i }}')" class="img-responsive gal-img" src="{{ images[i] }}" id="{{ i }}">
+    </div>
 {% endfor %}
 <div style="clear: both;"></div>
 {% endblock %}
