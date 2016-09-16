@@ -126,6 +126,10 @@ def user_page():
 @app.route('/stuff')
 def stuff():
     requests = [x for x in mongo.db.requests.find()]
+    for req in requests:
+        req['time'] = datetime.datetime.fromtimestamp(
+            req['time']
+        ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
     return render_template('stuff.html', title='Штуки', requests=requests)
 
 @app.route('/images/<image>')
