@@ -20,8 +20,13 @@
             <div style="height: 20%; padding: 0px 5px 0px 5px">
                 {{ form.csrf_token }}
                 {{ form.id_(hidden='true') }}
-                {{ form.text(required=True, style='resize: none; height: 73%;') }}
-                <button onclick="sendComment()">Отправить</button>
+                {% if current_user.is_authenticated %}
+                    {{ form.text(required=True, style='resize: none; height: 73%;') }}
+                    <button onclick="sendComment()">Отправить</button>
+                {% else %}
+                    <textarea disabled style="resize: none; height: 73%; background: #333">Войдите чтобы получить возможность комментировать</textarea>
+                    <button disabled style="background: #333">Отправить</button>
+                {% endif %}
             </div>
         </div>
     </div>

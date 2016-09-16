@@ -159,7 +159,7 @@ def load_comments():
 @app.route('/comment', methods=['POST'])
 def comment():
     form = EditFeedbackForm()
-    if form.validate_on_submit():
+    if current_user.is_authenticated and form.validate_on_submit():
         if not mongo.db.comments.find_one({'filename': form.id_.data}):
             path = os.path.abspath('app/images/' + form.id_.data)
             if not os.path.isfile(path):
