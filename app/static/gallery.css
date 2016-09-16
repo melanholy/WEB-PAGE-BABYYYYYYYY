@@ -15,7 +15,16 @@
     position: fixed;
     display: none;
     padding: 0px;
-    top: 100px;
+    top: 60px;
+}
+.gal-img {
+    border: 1px solid #444;
+    padding: 0px;
+    cursor: pointer;
+    z-index: 1;
+}
+.wrapper {
+    padding: 10px;
 }
 @media(max-width:991px){
     #image-big-div {

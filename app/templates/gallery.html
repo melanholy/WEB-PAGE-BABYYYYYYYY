@@ -32,7 +32,7 @@
     </div>
 </div>
 {% for i in range(images|length ) %}
-    <div class="col-md-2 col-sm-3 col-xs-4">
+    <div class="col-md-2 col-sm-3 col-xs-4 wrapper">
 	   <img onclick="expandImage('{{ i }}')" alt="loading" class="img-responsive gal-img" src="{{ images[i] }}" id="{{ i }}">
     </div>
 {% endfor %}

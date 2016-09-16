@@ -143,3 +143,4 @@ db
 *.crt
 *.key
 *.ca-bundle
+images
