@@ -1,3 +1,14 @@
+if (!window.history.pushState) {
+    window.history.pushState = function(one, two, url) {
+        window.location.pathname = url;
+    }
+}
+if (!document.getElementsByClassName) {
+    document.getElementsByClassName = function(name) {
+        return document.querySelectorAll('.' + name);
+    }
+}
+
 function expandImage(id) {
     window.history.pushState({}, "", '/' + 'gallery/' + id);
     setImage();
@@ -35,23 +46,10 @@ document.onkeydown = function(event) {
     }
 }
 
-if (!String.prototype.endsWith) {
-  Object.defineProperty(String.prototype, 'endsWith', {
-    value: function(searchString, position) {
-      var subjectString = this.toString();
-      if (position === undefined || position > subjectString.length) {
-        position = subjectString.length;
-      }
-      position -= searchString.length;
-      var lastIndex = subjectString.indexOf(searchString, position);
-      return lastIndex !== -1 && lastIndex === position;
-    }
-  });
-}
-
 function setImage() {
     var hids = document.getElementsByClassName('hid');
-    if (document.location.toString().endsWith('gallery')) {
+    var loc = document.location.toString();
+    if (loc[loc.length - 1] == 'y') {
         for (var i = 0; i < hids.length; i++)
             hids[i].style.display = 'none';
         return;
@@ -89,10 +87,6 @@ function setImage() {
     onResize();
 }
 
-window.addEventListener('popstate', function(event) {
-    setImage();
-});
-
 function onResize() {
     var wrp = document.getElementById('big-img-wrapper');
     var pic = document.getElementById('image-big');
@@ -106,10 +100,23 @@ function onResize() {
         wrp.style.maxHeight = null;
 }
 
-window.addEventListener('resize', function(event){
+function addEvent(event, func) {
+    if (window.addEventListener) {
+        window.addEventListener(event, func);
+    }
+    else {
+        window.attachEvent('on' + event, func);
+    }
+}
+
+addEvent('popstate', function(event) {
+    setImage();
+});
+
+addEvent('resize', function(event){
     onResize();
 });
 
-window.addEventListener('load', function(event){
+addEvent('load', function(event){
     setImage();
 });
