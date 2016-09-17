@@ -21,8 +21,8 @@
             {{ form.csrf_token }}
             {{ form.id_(hidden='true') }}
             {% if current_user.is_authenticated %}
-                {{ form.text(required=True, style='resize: none; height: 75%;') }}
-                <button onclick="sendComment()">Отправить</button>
+                {{ form.text(required=True, style='resize: none; height: 100px;') }}
+                <button onclick="sendComment()" style="height: 20px;">Отправить</button>
             {% else %}
                 <textarea disabled style="resize: none; height: 100px;">Войдите чтобы получить возможность комментировать</textarea>
                 <button disabled style="height: 20px;">Отправить</button>
