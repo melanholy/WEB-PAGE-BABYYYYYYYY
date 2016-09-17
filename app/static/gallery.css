@@ -4,7 +4,7 @@
     left: 0;
     z-index: 3;
     background: #000;
-    opacity: 0.6;
+    opacity: 0.8;
     width: 100%;
     height: 100%;
     display: none;
@@ -15,7 +15,6 @@
     position: fixed;
     display: none;
     padding: 0px;
-    top: 60px;
 }
 .gal-img {
     border: 1px solid #444;
@@ -23,12 +22,34 @@
     cursor: pointer;
     z-index: 1;
 }
-.wrapper {
-    padding: 10px;
+#image-big {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 100%;
 }
-@media(max-width:991px){
+.img-wrapper {
+    padding: 8px;
+}
+#big-img-wrapper {
+    padding: 0px;
+    background: #181818;
+    height: 100%;
+}
+@media(max-width:544px) {
+    .img-wrapper {
+        padding: 5px;
+    }
+}
+@media(max-width:991px) {
     #image-big-div {
         top: 40px;
+    }
+}
+@media (min-width: 1300px) {
+    .modal-xl {
+        width: 1250px;
     }
 }
 #cross {
@@ -52,14 +73,14 @@
     opacity: 1;
 }
 #comments-div {
-    background: linear-gradient(to bottom, #222, #282828) fixed;
+    background: #222;
     display: inline-block;
     padding: 0px;
+    height: 100%;
 }
 #comments {
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
-    height: 80%;
     padding: 5px;
 }
 p {
@@ -90,6 +111,9 @@ button {
 }
 button:focus {
     outline: none;
+}
+*:disabled {
+    background: #333;
 }
 .msb::-webkit-scrollbar-track {
     background-color: transparent;

@@ -4,13 +4,13 @@ import os
 from app import app, mongo
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
-from flask import render_template as jinja_render, send_from_directory, redirect, request, \
+from flask import render_template, send_from_directory, redirect, request, \
                   flash, send_file, jsonify
 from flask_login import login_required, login_user, logout_user, current_user
 
 SITE_PAGES = {'index', 'stuff', 'images', 'contacts', 'skills'}
 
-def render_template(*args, **kwargs):
+def render_with_visits(*args, **kwargs):
     now = datetime.datetime.now()
     beginning_of_day = datetime.datetime.combine(now.date(), datetime.time(0))
     passed_today = (now - beginning_of_day).seconds
@@ -29,7 +29,7 @@ def render_template(*args, **kwargs):
         ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
     else:
         last_visit = 'не было'
-    return jinja_render(
+    return render_template(
         *args, **kwargs,
         visits_today=visits_today,
         last_visit=last_visit,
@@ -54,14 +54,14 @@ def robots():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('404.html', title='Четыреста четыре'), 404
+    return render_with_visits('404.html', title='Четыреста четыре'), 404
 
 @app.route('/')
 @app.route('/index')
 def index():
     if request.path == '/':
         return redirect('/index')
-    return render_template('index.html', title='Обо мне',)
+    return render_with_visits('index.html', title='Обо мне',)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -73,7 +73,7 @@ def login():
             return request.args.get('next') or redirect('/')
         flash('Неверный логин или пароль.')
 
-    return render_template('login.html', title='Вход', form=form)
+    return render_with_visits('login.html', title='Вход', form=form)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -83,13 +83,13 @@ def register():
             return redirect('/login')
         flash('Пользователь с таким именем уже зарегистрирован.')
 
-    return render_template('register.html', title='Регистрация', form=form)
+    return render_with_visits('register.html', title='Регистрация', form=form)
 
 @app.route('/leave_feedback/<page>', methods=['POST', 'GET'])
 @login_required
 def leave_feedback(page):
     if page not in SITE_PAGES:
-        return render_template('404.html', title='Четыреста четыре'), 404
+        return render_with_visits('404.html', title='Четыреста четыре'), 404
     form = FeedbackForm(request.form)
     if request.method == 'POST' and form.validate():
         mongo.db.feedback.save({
@@ -101,14 +101,14 @@ def leave_feedback(page):
         })
         return redirect('/feedback/' + page)
 
-    return render_template('leave_feedback.html', title='Оставить отзыв', form=form)
+    return render_with_visits('leave_feedback.html', title='Оставить отзыв', form=form)
 
 @app.route('/feedback/<page>')
 def feedback(page):
     if page not in SITE_PAGES:
-        return render_template('404.html', title='Четыреста четыре'), 404
+        return render_with_visits('404.html', title='Четыреста четыре'), 404
     records = [x for x in mongo.db.feedback.find({'page': page}, sort=[('$natural', -1)])]
-    return render_template('feedback.html', title='Отзывы', feedback=records)
+    return render_with_visits('feedback.html', title='Отзывы', feedback=records)
 
 @app.route('/logout')
 @login_required
@@ -121,7 +121,7 @@ def logout():
 def user_page():
     form = EditFeedbackForm()
     cursor = mongo.db.feedback.find({'from': current_user.username})
-    return render_template('user.html', title='Настройки', feedback=cursor, form=form)
+    return render_with_visits('user.html', title='Настройки', feedback=cursor, form=form)
 
 @app.route('/stuff')
 def stuff():
@@ -130,13 +130,13 @@ def stuff():
         req['time'] = datetime.datetime.fromtimestamp(
             req['time']
         ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
-    return render_template('stuff.html', title='Штуки', requests=requests)
+    return render_with_visits('stuff.html', title='Штуки', requests=requests)
 
 @app.route('/images/<image>')
 def image(image):
     path = os.path.abspath('app/images/' + image)
     if not os.path.isfile(path):
-        return render_template('404.html', title='Четыреста четыре'), 404
+        return render_with_visits('404.html', title='Четыреста четыре'), 404
     return send_file(path, mimetype='image/jpeg')
 
 @app.route('/gallery/<img_id>')
@@ -144,7 +144,7 @@ def image(image):
 def gallery(img_id = None):
     images = ['/images/' + x for x in os.listdir('app/images')]
     form = EditFeedbackForm()
-    return render_template(
+    return render_with_visits(
         'gallery.html', title='Картиночки',
         images=images, form=form
     )

@@ -69,18 +69,31 @@ window.addEventListener('popstate', function(event) {
 });
 
 function onResize() {
-    var div = document.getElementById('image-big-div');
-    var com = document.getElementById('comments-div');
+    var wrp = document.getElementById('big-img-wrapper');
     var pic = document.getElementById('image-big');
-    
-    if (window.innerWidth > 992) {
-        div.style.height = (pic.height + 1) + 'px';
-        com.style.height = pic.height + 'px';
+    var com = document.getElementById('comments');
+    var com_div = document.getElementById('comments-div')
+    com.style.height = (com_div.offsetHeight - 130) + 'px';
+    if (window.innerWidth > 1300)
+    {
+        wrp.style.width = null;
+        wrp.style.marginLeft = null;
+        var gap = wrp.offsetWidth - pic.width;
+        if (gap <= 0)
+            return;
+        wrp.style.width = pic.width + 'px';
+        var div = document.getElementById('image-big-div');
+        wrp.style.marginLeft = (gap/2) + 'px';
     }
     else {
-        div.style.height = null;
-        com.style.height = '500px';
+        wrp.style.marginLeft = null;
+        wrp.style.width = null;
     }
+    if (window.innerWidth < 992) {
+        wrp.style.maxHeight = pic.height + 'px';
+    }
+    else
+        wrp.style.maxHeight = null;
 }
 
 window.addEventListener('resize', function(event){

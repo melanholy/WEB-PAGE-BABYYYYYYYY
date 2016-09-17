@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import 'macros.html' as macros %}
 
 {% block head %}
 	<script type="text/javascript" src="{{ url_for('static', filename='gallery.js') }}"></script>
@@ -10,29 +9,29 @@
 {% block body %}
 <div class="hid" id="shade" onclick="shrinkImage()"></div>
 <img src="{{ url_for('static', filename='cross.png') }}" class="hid" onclick="shrinkImage()" id="cross" alt="закрыть">
-<div class="modal modal-dialog modal-lg hid msb" id="image-big-div">
-    <div class="modal-content">
-        <img class="img-responsive col-sm-12 col-xs-12 col-md-8" alt="loading" id="image-big" src="" style="padding: 0px;">
-        <div class="col-sm-12 col-xs-12 col-md-4" id="comments-div">
-            <div id="comments" class="msb">
-                
-            </div>
-            <div style="height: 20%; padding: 0px 5px 0px 5px">
-                {{ form.csrf_token }}
-                {{ form.id_(hidden='true') }}
-                {% if current_user.is_authenticated %}
-                    {{ form.text(required=True, style='resize: none; height: 73%;') }}
-                    <button onclick="sendComment()">Отправить</button>
-                {% else %}
-                    <textarea disabled style="resize: none; height: 73%; background: #333">Войдите чтобы получить возможность комментировать</textarea>
-                    <button disabled style="background: #333">Отправить</button>
-                {% endif %}
-            </div>
+<div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs hid msb" id="image-big-div">
+    <div class="col-sm-12 col-xs-12 col-md-8" id="big-img-wrapper">
+        <img class="img-responsive" alt="loading" id="image-big" src="">
+    </div>
+    <div class="col-sm-12 col-xs-12 col-md-4" id="comments-div">
+        <div id="comments" class="msb">
+            
+        </div>
+        <div style="height: 120px; padding: 0px 5px 0px 5px">
+            {{ form.csrf_token }}
+            {{ form.id_(hidden='true') }}
+            {% if current_user.is_authenticated %}
+                {{ form.text(required=True, style='resize: none; height: 75%;') }}
+                <button onclick="sendComment()">Отправить</button>
+            {% else %}
+                <textarea disabled style="resize: none; height: 100px;">Войдите чтобы получить возможность комментировать</textarea>
+                <button disabled style="height: 20px;">Отправить</button>
+            {% endif %}
         </div>
     </div>
 </div>
 {% for i in range(images|length ) %}
-    <div class="col-md-2 col-sm-3 col-xs-4 wrapper">
+    <div class="col-md-2 col-sm-3 col-xs-4 col-lg-2 col-el-2 img-wrapper">
 	   <img onclick="expandImage('{{ i }}')" alt="loading" class="img-responsive gal-img" src="{{ images[i] }}" id="{{ i }}">
     </div>
 {% endfor %}

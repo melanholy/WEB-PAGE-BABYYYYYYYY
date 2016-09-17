@@ -51,6 +51,11 @@ body {
     border: 1px solid #444;
     padding: 15px 10px 20px 10px;
 }
+@media(max-width:544px) {
+    .content {
+        padding: 7px 5px 10px 5px;
+    }
+}
 a:focus {
     color: #999;
     text-decoration: none;
