@@ -21,6 +21,7 @@
     padding: 0px;
     cursor: pointer;
     z-index: 1;
+    background-image: url(/static/spinner.gif);
 }
 #image-big {
     position: absolute;
@@ -28,6 +29,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     max-height: 100%;
+    background-image: url(/static/spinner.gif);
 }
 .img-wrapper {
     padding: 8px;
