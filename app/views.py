@@ -142,8 +142,9 @@ def image(image):
 @app.route('/gallery/<img_id>')
 @app.route('/gallery')
 def gallery(img_id = None):
-    min_images = ['/images/' + x for x in os.listdir('app/images') if x.startswith('min')]
-    images = ['/images/' + x for x in os.listdir('app/images') if not x.startswith('min')]
+    min_images = sorted(['/images/' + x for x in os.listdir('app/images') if x.startswith('min')])
+    images = sorted(['/images/' + x for x in os.listdir('app/images') if not x.startswith('min')])
+    print(images)
     form = EditFeedbackForm()
     return render_with_visits(
         'gallery.html', title='Картиночки',
