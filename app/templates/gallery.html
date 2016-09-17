@@ -4,6 +4,7 @@
 	<script type="text/javascript" src="{{ url_for('static', filename='gallery.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='ajax.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='gallery.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -12,6 +13,7 @@
 <div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs hid msb" id="image-big-div">
     <div class="col-sm-12 col-xs-12 col-md-8" id="big-img-wrapper">
         <img class="img-responsive" alt="loading" id="image-big" src="">
+        <img src="" id="img-preload" style="display: none;">
     </div>
     <div class="col-sm-12 col-xs-12 col-md-4" id="comments-div">
         <div id="comments" class="msb">
@@ -21,18 +23,18 @@
             {{ form.csrf_token }}
             {{ form.id_(hidden='true') }}
             {% if current_user.is_authenticated %}
-                {{ form.text(required=True, style='resize: none; height: 100px;') }}
-                <button onclick="sendComment()" style="height: 20px;">Отправить</button>
+                {{ form.text(required=True, style='resize: none; height: 100px; width: 100%;') }}
+                <button onclick="sendComment()" style="height: 20px; width: 100%;">Отправить</button>
             {% else %}
-                <textarea disabled style="resize: none; height: 100px;">Войдите чтобы получить возможность комментировать</textarea>
-                <button disabled style="height: 20px;">Отправить</button>
+                <textarea disabled style="resize: none; height: 100px; width: 100%;">Войдите чтобы получить возможность комментировать</textarea>
+                <button disabled style="height: 20px; width: 100%;">Отправить</button>
             {% endif %}
         </div>
     </div>
 </div>
-{% for i in range(images|length ) %}
+{% for i in range(min_images|length ) %}
     <div class="col-md-2 col-sm-3 col-xs-4 col-lg-2 col-el-2 img-wrapper">
-	   <img onclick="expandImage('{{ i }}')" alt="loading" class="img-responsive gal-img" src="{{ images[i] }}" id="{{ i }}">
+	   <img onclick="expandImage('{{ i }}')" alt="loading" class="img-responsive gal-img" data-big="{{ images[i] }}" src="{{ min_images[i] }}" id="{{ i }}">
     </div>
 {% endfor %}
 <div style="clear: both;"></div>
