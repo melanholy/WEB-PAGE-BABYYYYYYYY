@@ -10,6 +10,15 @@
 {% block body %}
 <div class="hid" id="shade" onclick="shrinkImage()"></div>
 <img src="{{ url_for('static', filename='cross.png') }}" class="hid" onclick="shrinkImage()" id="cross" alt="закрыть">
+<div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs msb" id="help">
+    Вы находитесь в галерее. Помощь по использованию:<br>
+    <ol>
+    <li>Нажмите на миниатюру изображения, чтобы открыть его полную версию.</li>
+    <li>ESC - закрыть большое изображение.</li>
+    <li>По картинкам можно перемещаться стрелками на клавиатуре.</li>
+    <li>F1 - открыть/закрыть окно помощи.</li>
+    <ol>
+</div>
 <div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs hid msb" id="image-big-div">
     <div class="col-sm-12 col-xs-12 col-md-8" id="big-img-wrapper">
         <img class="img-responsive" alt="loading" id="image-big" src="">

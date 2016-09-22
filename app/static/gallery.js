@@ -18,6 +18,7 @@ function shrinkImage() {
     var hids = document.getElementsByClassName('hid');
     for (var i = 0; i < hids.length; i++)
         hids[i].style.display = 'none';
+    document.getElementById('help').style.display = 'none';
 
     window.history.pushState({}, "", '/gallery');
 }
@@ -43,6 +44,23 @@ document.onkeydown = function(event) {
         next = next % pics_len;
         window.history.pushState({}, "", '/gallery/' + next);
         setImage();
+    }
+    else {
+        if (event.keyCode == 112) {
+            var help = document.getElementById('help');
+            var cross = document.getElementById('cross');
+            var shade = document.getElementById('shade');
+            if (help.style.display != 'block') {
+                cross.style.display = 'block';
+                shade.style.display = 'block';
+                help.style.display = 'block';
+            }
+            else {
+                help.style.display = 'none';
+                cross.style.display = 'none';
+                shade.style.display = 'none';
+            }
+        }
     }
 }
 

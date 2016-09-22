@@ -1,12 +1,17 @@
 import datetime
 import time
 import os
+import io
 from app import app, mongo
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
 from flask import render_template, send_from_directory, redirect, request, \
                   flash, send_file, jsonify
 from flask_login import login_required, login_user, logout_user, current_user
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw 
+
 
 SITE_PAGES = {'index', 'stuff', 'images', 'contacts', 'skills'}
 
@@ -180,3 +185,17 @@ def comment():
         )
         return 'ok'
     return 'атата'
+
+@app.route('/stats')
+def stats():
+    img = Image.open('app/images/stats.png')
+    draw = ImageDraw.Draw(img)
+    text = Image.new('RGBA', (100, 40), (0, 0, 0, 0))
+    tdraw = ImageDraw.Draw(text)
+    font = ImageFont.truetype('/usr/share/fonts/WinFonts/verdana.ttf', 20)
+    tdraw.text((0, 0), '1488', (144, 144, 144), font=font)
+    draw.text((112, 2), '1488', (144, 144, 144), font=font)
+    data = io.BytesIO()
+    text.save(data, format='PNG')
+    data.seek(0)
+    return send_file(data, mimetype='image/png')
