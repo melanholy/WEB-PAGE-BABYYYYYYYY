@@ -24,7 +24,7 @@ body {
     display: inline-block;
     word-wrap: nowrap;
 }
-@media(max-width:876px){
+@media(max-width:436px){
     .header {
         padding-top: 38px;
     }

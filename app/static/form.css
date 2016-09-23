@@ -36,6 +36,6 @@ input[type=submit] {
     margin-bottom: 5px;
     cursor: default;
 }
-input[type=submit]:focus {
+input[type=submit]:focus, button:focus {
     outline: none;
 }

@@ -2,6 +2,7 @@ import datetime
 import time
 import os
 import io
+import re
 from app import app, mongo
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
@@ -12,7 +13,7 @@ from flask_login import login_required, login_user, logout_user, current_user
 from wand.image import Image
 from wand.drawing import Drawing, Color
 
-SITE_PAGES = {'index', 'stuff', 'images', 'contacts', 'skills'}
+IP_RE = re.compile(r'^(\d{1,3}\.){3}\d{1,3}$')
 
 @app.after_request
 def after_request(response):
@@ -75,6 +76,7 @@ def register():
 def leave_feedback():
     form = FeedbackForm(request.form)
     if request.method == 'POST' and form.validate():
+        print(form.text.data)
         mongo.db.feedback.save({
             'from': current_user.username,
             'text': form.text.data,
@@ -85,10 +87,18 @@ def leave_feedback():
 
     return render_template('leave_feedback.html', title='Оставить отзыв', form=form)
 
+B_TAG = re.compile(r'&lt;b&gt;(.+?)&lt;/b&gt;')
+I_TAG = re.compile(r'&lt;i&gt;(.+?)&lt;/i&gt;')
+IMG_TAG = re.compile(r'&lt;img src=&#34;(.+?)&#34;&gt;')
+
+def unescape_allowed_tags(text):
+    text = I_TAG.sub(r'<i>\1</i>', IMG_TAG.sub(r'<img src="\1" style="max-width: 360px;">', B_TAG.sub(r'<b>\1</b>', text)))
+    return text
+
 @app.route('/feedback')
 def feedback():
     records = [x for x in mongo.db.feedback.find()]
-    return render_template('feedback.html', title='Отзывы', feedback=records)
+    return unescape_allowed_tags(render_template('feedback.html', title='Отзывы', feedback=records))
 
 @app.route('/logout')
 @login_required
@@ -105,7 +115,12 @@ def user_page():
 
 @app.route('/stuff')
 def stuff():
-    requests = [x for x in mongo.db.hits.find()]
+    if 'filter' in request.args:
+        if not IP_RE.match(request.args['filter']):
+            return 'атата'
+        requests = [x for x in mongo.db.hits.find({'address': request.args['filter']})]
+    else:
+        requests = [x for x in mongo.db.hits.find()]
     for req in requests:
         req['time'] = datetime.datetime.fromtimestamp(
             req['time']
@@ -115,7 +130,7 @@ def stuff():
 @app.route('/images/<image>')
 def image(image):
     path = os.path.abspath('app/images/' + image)
-    if not os.path.isfile(path):
+    if not os.path.isfile(path) and (path.endswith('.png') or path.endswith('.jpg')):
         return render_template('404.html', title='Четыреста четыре'), 404
     return send_file(path, mimetype='image/jpeg')
 
@@ -179,17 +194,6 @@ def nocache(view):
 @app.route('/stats')
 @nocache
 def stats():
-    def multiline_text(draw, xy, text, fill, font, spacing=4):
-        lines = text.split('\n')
-        line_spacing = draw.textsize('A', font=font)[1] + spacing
-        left, top = xy
-        for idx, line in enumerate(lines):
-            mask = font.getmask(line)
-            ink, _ = draw._getink((144, 144, 144))
-            draw.draw.draw_bitmap((left, top), mask, ink)
-            top += line_spacing
-            left = xy[0]
-
     if not request.args.get('path'):
         return 'атата'
 
