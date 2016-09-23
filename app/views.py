@@ -22,7 +22,8 @@ def after_request(response):
     response.headers['Server'] = 'supa dupa servah'
 
     if request.method == 'GET' and not request.path.startswith('/static') and \
-       not request.path.startswith('/images') and not request.path == '/stats':
+       not request.path.startswith('/images') and not request.path == '/stats' \
+       and not request.path == '/':
         if BLOCKED_USERS.get(request.remote_addr) and time.time() - BLOCKED_USERS[request.remote_addr] < 60:
             return response
         if BLOCKED_USERS.get(request.remote_addr):
