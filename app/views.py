@@ -15,11 +15,25 @@ from wand.drawing import Drawing, Color
 from bson.objectid import ObjectId
 
 IP_RE = re.compile(r'^(\d{1,3}\.){3}\d{1,3}$')
+BLOCKED_USERS = {}
 
 @app.after_request
 def after_request(response):
+    response.headers['Server'] = 'supa dupa servah'
+
     if request.method == 'GET' and not request.path.startswith('/static') and \
        not request.path.startswith('/images') and not request.path == '/stats':
+        if BLOCKED_USERS.get(request.remote_addr) and time.time() - BLOCKED_USERS[request.remote_addr] < 60:
+            return response
+        if BLOCKED_USERS.get(request.remote_addr):
+            del BLOCKED_USERS[request.remote_addr]
+        recent_hits_count = mongo.db.hits.find({
+            'time': {'$gt': time.time() - 10},
+            'address': request.remote_addr
+        }).count()
+        if recent_hits_count > 4:
+            BLOCKED_USERS[request.remote_addr] = time.time()
+            return response
         mongo.db.hits.save({
             'time': int(time.time()),
             'address': request.remote_addr,
@@ -32,7 +46,6 @@ def after_request(response):
                 'time': int(time.time())
             })
 
-    response.headers['Server'] = 'supa dupa servah'
     return response
 
 @app.route('/robots.txt')
@@ -240,11 +253,19 @@ def stats():
     last_hit = 'Последнее посещение этой страницы: {}'.format(last_hit)
 
     data = io.BytesIO()
-    with Image(width=320, height=34) as img:
+    if request.remote_addr not in BLOCKED_USERS:
+        width = 320
+        height = 34
+        text = '\n'.join([visits, hits, last_hit])
+    else:
+        width = 100
+        height = 13
+        text = 'ДОНАКРУЧИВАЛСЯ'
+    with Image(width=width, height=height) as img:
         with Drawing() as draw:
             draw.font_size = 10
             draw.fill_color = Color('rgb(220, 220, 220)')
-            draw.text(0, 10, '\n'.join([visits, hits, last_hit]))
+            draw.text(0, 10, text)
             draw(img)
         with img.convert('png') as converted:
             converted.save(data)
