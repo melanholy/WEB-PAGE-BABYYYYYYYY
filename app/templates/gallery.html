@@ -17,12 +17,12 @@
     <li>ESC - закрыть большое изображение.</li>
     <li>По картинкам можно перемещаться стрелками на клавиатуре.</li>
     <li>F1 - открыть/закрыть окно помощи.</li>
-    <ol>
+    </ol>
 </div>
 <div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs hid msb" id="image-big-div">
     <div class="col-sm-12 col-xs-12 col-md-8" id="big-img-wrapper">
         <img class="img-responsive" alt="loading" id="image-big" src="">
-        <img src="" id="img-preload" style="display: none;">
+        <img src="" id="img-preload" style="display: none;" alt="если вы можете это читать, сделайте мне бутерброд">
     </div>
     <div class="col-sm-12 col-xs-12 col-md-4" id="comments-div">
         <div id="comments" class="msb">
@@ -30,7 +30,7 @@
         </div>
         <div style="height: 120px; padding: 0px 5px 0px 5px">
             {{ form.csrf_token }}
-            {{ form.id_(hidden='true') }}
+            {{ form.id_() }}
             {% if current_user.is_authenticated %}
                 {{ form.text(required=True, style='resize: none; height: 100px; width: 100%;') }}
                 <button onclick="sendComment()" style="height: 20px; width: 100%;">Отправить</button>

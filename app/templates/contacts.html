@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <style type="text/css">
+        .contact-img {
+            max-height: 171px;
+            width: auto;
+            margin: 0 auto;
+            margin-top: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="col-sm-4" style="text-align: center;">
+    <a href="https://vk.com/4d5354353" target="_blank">
+        Написать телеграмму<br>
+        <img class="img-responsive contact-img" src="{{ url_for('static', filename='telegraph.png') }}" alt="Телеграф">
+    </a>
+</div>
+<div class="col-sm-4" style="text-align: center;">
+    <a href="mailto:irrygan@gmail.com">
+        Отправить голубя<br>
+        <img class="img-responsive contact-img" src="{{ url_for('static', filename='pigeon.png') }}" alt="Голубь">
+    </a>
+</div>
+<div class="col-sm-4" style="text-align: center;">
+    <a href="https://github.com/melanholy" target="_blank">
+        Профиль GitHub<br>
+        <img class="img-responsive contact-img" src="{{ url_for('static', filename='sir_octocat.png') }}" alt="Октокот">
+    </a>
+</div>
+<div style="clear: both;"></div>
+{% endblock %}

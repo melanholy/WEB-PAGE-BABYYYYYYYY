@@ -8,10 +8,8 @@ from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
 from flask import render_template, send_from_directory, redirect, request, \
                   flash, send_file, jsonify
 from flask_login import login_required, login_user, logout_user, current_user
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw 
-
+from wand.image import Image
+from wand.drawing import Drawing, Color
 
 SITE_PAGES = {'index', 'stuff', 'images', 'contacts', 'skills'}
 
@@ -90,29 +88,24 @@ def register():
 
     return render_with_visits('register.html', title='Регистрация', form=form)
 
-@app.route('/leave_feedback/<page>', methods=['POST', 'GET'])
+@app.route('/leave_feedback', methods=['POST', 'GET'])
 @login_required
-def leave_feedback(page):
-    if page not in SITE_PAGES:
-        return render_with_visits('404.html', title='Четыреста четыре'), 404
+def leave_feedback():
     form = FeedbackForm(request.form)
     if request.method == 'POST' and form.validate():
         mongo.db.feedback.save({
-            'page': page,
             'from': current_user.username,
             'text': form.text.data,
             'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
             'age': form.age.data
         })
-        return redirect('/feedback/' + page)
+        return redirect('/feedback')
 
     return render_with_visits('leave_feedback.html', title='Оставить отзыв', form=form)
 
-@app.route('/feedback/<page>')
-def feedback(page):
-    if page not in SITE_PAGES:
-        return render_with_visits('404.html', title='Четыреста четыре'), 404
-    records = [x for x in mongo.db.feedback.find({'page': page}, sort=[('$natural', -1)])]
+@app.route('/feedback')
+def feedback():
+    records = [x for x in mongo.db.feedback.find(sort=[('$natural', -1)])]
     return render_with_visits('feedback.html', title='Отзывы', feedback=records)
 
 @app.route('/logout')
@@ -188,14 +181,32 @@ def comment():
 
 @app.route('/stats')
 def stats():
-    img = Image.open('app/images/stats.png')
-    draw = ImageDraw.Draw(img)
-    text = Image.new('RGBA', (100, 40), (0, 0, 0, 0))
-    tdraw = ImageDraw.Draw(text)
-    font = ImageFont.truetype('/usr/share/fonts/WinFonts/verdana.ttf', 20)
-    tdraw.text((0, 0), '1488', (144, 144, 144), font=font)
-    draw.text((112, 2), '1488', (144, 144, 144), font=font)
+    def multiline_text(draw, xy, text, fill, font, spacing=4):
+        lines = text.split('\n')
+        line_spacing = draw.textsize('A', font=font)[1] + spacing
+        left, top = xy
+        for idx, line in enumerate(lines):
+            mask = font.getmask(line)
+            ink, _ = draw._getink((144, 144, 144))
+            draw.draw.draw_bitmap((left, top), mask, ink)
+            top += line_spacing
+            left = xy[0]
+
     data = io.BytesIO()
-    text.save(data, format='PNG')
+    with Image(width=382, height=23) as img:
+        with Drawing() as draw:
+            draw.font = 'verda234234234na.ttf'
+            draw.font_size = 10
+            draw.fill_color = Color('#999')
+            draw.text(0, 10, '''Всего посещений:  10000 | Сегодня: 10000 | Этой страницы: 10000
+Всего просмотров: 10000 | Сегодня: 10000 | Этой страницы: 10000''')
+            draw(img)
+        with img.convert('png') as converted:
+            converted.save(data)
+
     data.seek(0)
     return send_file(data, mimetype='image/png')
+
+@app.route('/contacts')
+def contacts():
+    return render_with_visits('contacts.html', title='Контакты')

@@ -38,6 +38,11 @@ body {
     margin-left: -5px;
     width: 128px;
 }
+@media(max-width: 411px) {
+    .menu-item {
+        width: 50%;
+    }
+}
 .header ul li a:hover {
     background: #292929;
 }
