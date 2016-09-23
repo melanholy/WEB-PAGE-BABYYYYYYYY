@@ -104,9 +104,18 @@ def leave_feedback():
 B_TAG = re.compile(r'&lt;b&gt;(.+?)&lt;/b&gt;')
 I_TAG = re.compile(r'&lt;i&gt;(.+?)&lt;/i&gt;')
 IMG_TAG = re.compile(r'&lt;img src=&#34;(.+?)&#34;&gt;')
+BR_TAG = re.compile(r'&lt;br&gt;')
 
 def unescape_allowed_tags(text):
-    text = I_TAG.sub(r'<i>\1</i>', IMG_TAG.sub(r'<img src="\1" style="max-width: 360px;">', B_TAG.sub(r'<b>\1</b>', text)))
+    text = BR_TAG.sub(
+        '<br>', I_TAG.sub(
+            r'<i>\1</i>', IMG_TAG.sub(
+                r'<img src="\1" style="max-width: 360px;">', B_TAG.sub(
+                    r'<b>\1</b>', text
+                )
+            )
+        )
+    )
     return text
 
 @app.route('/feedback')
