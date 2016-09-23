@@ -8,34 +8,46 @@
             background: #292929;
             border: 1px solid #444;
             margin: -1px;
+            cursor: pointer;
         }
         .panel-head:hover {
             background: #2c2c2c;
         }
-        .no-highlight {
-            font-weight: normal;
-        }
-        .no-highlight:hover {
-            color: #999;
+        .collapse {
+            height: 0px;
+            display: block;
+            overflow: hidden;
+            -webkit-transition: height 0.2s linear;
+            -moz-transition: height 0.2s linear;
+            -ms-transition: height 0.2s linear;
+            -o-transition: height 0.2s linear;
+            transition: height 0.2s linear;
         }
     </style>
+    <script type="text/javascript">
+        function toggle(id) {
+            var el = document.getElementById(id);
+            if (el.style.height == '0px' || el.style.height == '')
+                el.style.height = '135px';
+            else
+                el.style.height = '0px';
+        }
+    </script>
 {% endblock %}
 {% block body %}
 Тут можно отредактировать оставленные вами отзывы.
 {% for record in feedback %}
     <div style="border: 1px solid #444; margin-bottom: 9px;">
-        <a class="no-highlight" data-toggle="collapse" href="#collapse{{ loop.index }}">
-            <div class="panel-head">
-                <strong>{{ record['date'] }}</strong><br>
-                {{ record['text'][:100] }}
-            </div>
-        </a>
+        <div class="panel-head" onclick="toggle('collapse{{ loop.index }}');">
+            <strong>{{ record['date'] }}</strong><br>
+            {{ record['text'][:100] }}
+        </div>
         <div id="collapse{{ loop.index }}" class="collapse">
             <form method="POST" action="/user">
                 {{ form.csrf_token }}
-                {{ form.id_(value=record['_id'], hidden='true') }}
+                {{ form.id_(value=record['_id']) }}
                 <div class="input-group">
-                    {{ form.text(class_='form-control', data=record['text']) }}<br>
+                    {{ form.text(class_='form-control', data=record['text'], style="height: 100px;") }}<br>
                     <span class="input-group-addon">Новый текст</span>
                 </div>
                 <input type="submit" value="Подтвердить" style="margin: 5px; width: 100px; cursor: default" >

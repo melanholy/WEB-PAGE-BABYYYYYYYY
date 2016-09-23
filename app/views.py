@@ -5,50 +5,32 @@ import io
 from app import app, mongo
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
+from functools import wraps, update_wrapper
 from flask import render_template, send_from_directory, redirect, request, \
-                  flash, send_file, jsonify
+                  flash, send_file, jsonify, make_response
 from flask_login import login_required, login_user, logout_user, current_user
 from wand.image import Image
 from wand.drawing import Drawing, Color
 
 SITE_PAGES = {'index', 'stuff', 'images', 'contacts', 'skills'}
 
-def render_with_visits(*args, **kwargs):
-    now = datetime.datetime.now()
-    beginning_of_day = datetime.datetime.combine(now.date(), datetime.time(0))
-    passed_today = (now - beginning_of_day).seconds
-    visits_today = mongo.db.requests.find({
-        'address': request.remote_addr,
-        'time': {'$gt': time.time() - passed_today}
-    }).count()
-    visits_total = mongo.db.requests.find().count()
-    last_visit = mongo.db.requests.find_one({
-        'address': request.remote_addr,
-        'path': request.path,
-    }, sort=[('$natural', -1)])
-    if last_visit:
-        last_visit = datetime.datetime.fromtimestamp(
-            last_visit['time']
-        ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
-    else:
-        last_visit = 'не было'
-    return render_template(
-        *args, **kwargs,
-        visits_today=visits_today,
-        last_visit=last_visit,
-        visits_total=visits_total,
-        time=time.time()
-    )
-
 @app.after_request
 def after_request(response):
-    mongo.db.requests.save({
-        'time': int(time.time()),
-        'address': request.remote_addr,
-        'path': request.path
-    })
+    if request.method == 'GET' and not request.path.startswith('/static') and \
+       not request.path.startswith('/images') and not request.path == '/stats':
+        mongo.db.hits.save({
+            'time': int(time.time()),
+            'address': request.remote_addr,
+            'path': request.path
+        })
+        last_record = mongo.db.visits.find_one({'address': request.remote_addr}, sort=[('$natural', -1)])
+        if not last_record or time.time() - last_record['time'] > 1800:
+            mongo.db.visits.save({
+                'address': request.remote_addr,
+                'time': int(time.time())
+            })
 
-    response.headers['Server'] = 'SUPA-DUPA-SERVAH'
+    response.headers['Server'] = 'supa dupa servah'
     return response
 
 @app.route('/robots.txt')
@@ -57,14 +39,14 @@ def robots():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_with_visits('404.html', title='Четыреста четыре'), 404
+    return render_template('404.html', title='Четыреста четыре'), 404
 
 @app.route('/')
 @app.route('/index')
 def index():
     if request.path == '/':
         return redirect('/index')
-    return render_with_visits('index.html', title='Обо мне',)
+    return render_template('index.html', title='Обо мне')
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -76,7 +58,7 @@ def login():
             return request.args.get('next') or redirect('/')
         flash('Неверный логин или пароль.')
 
-    return render_with_visits('login.html', title='Вход', form=form)
+    return render_template('login.html', title='Вход', form=form)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -86,7 +68,7 @@ def register():
             return redirect('/login')
         flash('Пользователь с таким именем уже зарегистрирован.')
 
-    return render_with_visits('register.html', title='Регистрация', form=form)
+    return render_template('register.html', title='Регистрация', form=form)
 
 @app.route('/leave_feedback', methods=['POST', 'GET'])
 @login_required
@@ -101,12 +83,12 @@ def leave_feedback():
         })
         return redirect('/feedback')
 
-    return render_with_visits('leave_feedback.html', title='Оставить отзыв', form=form)
+    return render_template('leave_feedback.html', title='Оставить отзыв', form=form)
 
 @app.route('/feedback')
 def feedback():
-    records = [x for x in mongo.db.feedback.find(sort=[('$natural', -1)])]
-    return render_with_visits('feedback.html', title='Отзывы', feedback=records)
+    records = [x for x in mongo.db.feedback.find()]
+    return render_template('feedback.html', title='Отзывы', feedback=records)
 
 @app.route('/logout')
 @login_required
@@ -119,22 +101,22 @@ def logout():
 def user_page():
     form = EditFeedbackForm()
     cursor = mongo.db.feedback.find({'from': current_user.username})
-    return render_with_visits('user.html', title='Настройки', feedback=cursor, form=form)
+    return render_template('user.html', title='Настройки', feedback=cursor, form=form)
 
 @app.route('/stuff')
 def stuff():
-    requests = [x for x in mongo.db.requests.find()]
+    requests = [x for x in mongo.db.hits.find()]
     for req in requests:
         req['time'] = datetime.datetime.fromtimestamp(
             req['time']
         ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
-    return render_with_visits('stuff.html', title='Штуки', requests=requests)
+    return render_template('stuff.html', title='Штуки', requests=requests)
 
 @app.route('/images/<image>')
 def image(image):
     path = os.path.abspath('app/images/' + image)
     if not os.path.isfile(path):
-        return render_with_visits('404.html', title='Четыреста четыре'), 404
+        return render_template('404.html', title='Четыреста четыре'), 404
     return send_file(path, mimetype='image/jpeg')
 
 @app.route('/gallery/<img_id>')
@@ -143,7 +125,7 @@ def gallery(img_id = None):
     min_images = sorted(['/images/' + x for x in os.listdir('app/images') if x.startswith('min')])
     images = sorted(['/images/' + x for x in os.listdir('app/images') if not x.startswith('min')])
     form = EditFeedbackForm()
-    return render_with_visits(
+    return render_template(
         'gallery.html', title='Картиночки',
         images=images, min_images=min_images, form=form
     )
@@ -179,7 +161,23 @@ def comment():
         return 'ok'
     return 'атата'
 
+def nocache(view):
+    @wraps(view)
+    def no_cache(*args, **kwargs):
+        response = make_response(view(*args, **kwargs))
+        response.headers['Last-Modified'] = datetime.datetime.now()
+        response.headers['Cache-Control'] = (
+            'no-store, no-cache, must-revalidate, ' +
+            'post-check=0, pre-check=0, max-age=0'
+        )
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '-1'
+        return response
+        
+    return update_wrapper(no_cache, view)
+
 @app.route('/stats')
+@nocache
 def stats():
     def multiline_text(draw, xy, text, fill, font, spacing=4):
         lines = text.split('\n')
@@ -192,14 +190,49 @@ def stats():
             top += line_spacing
             left = xy[0]
 
+    if not request.args.get('path'):
+        return 'атата'
+
+    now = datetime.datetime.now()
+    beginning_of_day = datetime.datetime.combine(now.date(), datetime.time(0))
+    passed_today = (now - beginning_of_day).seconds
+
+    visits_today = str(mongo.db.visits.find({
+        'time': {'$gt': time.time() - passed_today}
+    }).count())
+    visits_total = str(mongo.db.visits.find().count())
+
+    hits_today = str(mongo.db.hits.find({
+        'time': {'$gt': time.time() - passed_today}
+    }).count())
+    hits_total = str(mongo.db.hits.find().count())
+    last_hits = [x for x in mongo.db.hits.find({
+        'address': request.remote_addr,
+        'path': request.args['path']
+    }, sort=[('$natural', -1)], limit=2)]
+    if len(last_hits) > 1:
+        last_hit = datetime.datetime.fromtimestamp(
+            last_hits[1]['time']
+        ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
+    else:
+        last_hit = 'не было'
+
+    visits = 'Всего посещений:  {} | Сегодня: {}'.format(
+        visits_total + ' '*(5 - len(visits_total)),
+        visits_today
+    )
+    hits = 'Всего просмотров: {} | Сегодня: {}'.format(
+        hits_total + ' '*(5 - len(hits_total)),
+        hits_today
+    )
+    last_hit = 'Последнее посещение этой страницы: {}'.format(last_hit)
+
     data = io.BytesIO()
-    with Image(width=382, height=23) as img:
+    with Image(width=320, height=34) as img:
         with Drawing() as draw:
-            draw.font = 'verda234234234na.ttf'
             draw.font_size = 10
             draw.fill_color = Color('#999')
-            draw.text(0, 10, '''Всего посещений:  10000 | Сегодня: 10000 | Этой страницы: 10000
-Всего просмотров: 10000 | Сегодня: 10000 | Этой страницы: 10000''')
+            draw.text(0, 10, '\n'.join([visits, hits, last_hit]))
             draw(img)
         with img.convert('png') as converted:
             converted.save(data)
@@ -209,4 +242,4 @@ def stats():
 
 @app.route('/contacts')
 def contacts():
-    return render_with_visits('contacts.html', title='Контакты')
+    return render_template('contacts.html', title='Контакты')
