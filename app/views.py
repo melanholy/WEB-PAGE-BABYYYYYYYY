@@ -12,6 +12,7 @@ from flask import render_template, send_from_directory, redirect, request, \
 from flask_login import login_required, login_user, logout_user, current_user
 from wand.image import Image
 from wand.drawing import Drawing, Color
+from bson.objectid import ObjectId
 
 IP_RE = re.compile(r'^(\d{1,3}\.){3}\d{1,3}$')
 
@@ -76,7 +77,6 @@ def register():
 def leave_feedback():
     form = FeedbackForm(request.form)
     if request.method == 'POST' and form.validate():
-        print(form.text.data)
         mongo.db.feedback.save({
             'from': current_user.username,
             'text': form.text.data,
@@ -110,6 +110,14 @@ def logout():
 @login_required
 def user_page():
     form = EditFeedbackForm()
+    if request.method == 'POST' and form.validate():
+        if mongo.db.feedback.find_one({'_id': ObjectId(form.id_.data)}):
+            mongo.db.feedback.update({
+                '_id': ObjectId(form.id_.data)},
+                {'$set': {'text': form.text.data}}
+            )
+        else:
+            return 'атата'
     cursor = mongo.db.feedback.find({'from': current_user.username})
     return render_template('user.html', title='Настройки', feedback=cursor, form=form)
 
