@@ -179,17 +179,6 @@ def nocache(view):
 @app.route('/stats')
 @nocache
 def stats():
-    def multiline_text(draw, xy, text, fill, font, spacing=4):
-        lines = text.split('\n')
-        line_spacing = draw.textsize('A', font=font)[1] + spacing
-        left, top = xy
-        for idx, line in enumerate(lines):
-            mask = font.getmask(line)
-            ink, _ = draw._getink((144, 144, 144))
-            draw.draw.draw_bitmap((left, top), mask, ink)
-            top += line_spacing
-            left = xy[0]
-
     if not request.args.get('path'):
         return 'атата'
 
