@@ -231,7 +231,7 @@ def stats():
     with Image(width=320, height=34) as img:
         with Drawing() as draw:
             draw.font_size = 10
-            draw.fill_color = Color('#999')
+            draw.fill_color = Color('rgb(220, 220, 220)')
             draw.text(0, 10, '\n'.join([visits, hits, last_hit]))
             draw(img)
         with img.convert('png') as converted:
