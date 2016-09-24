@@ -144,3 +144,4 @@ db
 *.key
 *.ca-bundle
 images
+*.pem
