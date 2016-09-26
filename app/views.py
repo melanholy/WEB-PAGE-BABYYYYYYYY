@@ -3,16 +3,17 @@ import time
 import os
 import io
 import re
+from functools import wraps, update_wrapper
 from app import app, mongo
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
-from functools import wraps, update_wrapper
 from flask import render_template, send_from_directory, redirect, request, \
                   flash, send_file, jsonify, make_response
 from flask_login import login_required, login_user, logout_user, current_user
 from wand.image import Image
 from wand.drawing import Drawing, Color
 from bson.objectid import ObjectId
+from jinja2 import escape
 
 IP_RE = re.compile(r'^(\d{1,3}\.){3}\d{1,3}$')
 BLOCKED_USERS = {}
@@ -107,21 +108,18 @@ IMG_TAG = re.compile(r'&lt;img src=&#34;(.+?)&#34;&gt;')
 BR_TAG = re.compile(r'&lt;br&gt;')
 
 def unescape_allowed_tags(text):
-    text = BR_TAG.sub(
-        '<br>', I_TAG.sub(
-            r'<i>\1</i>', IMG_TAG.sub(
-                r'<img src="\1" style="max-width: 360px;">', B_TAG.sub(
-                    r'<b>\1</b>', text
-                )
-            )
-        )
-    )
+    text = IMG_TAG.sub(r'<img src="\1" style="max-width: 360px;">', text)
+    text = B_TAG.sub(r'<b>\1</b>', text)
+    text = BR_TAG.sub(r'<br>', text)
+    text = I_TAG.sub(r'<i>\1</i>', text)
     return text
 
 @app.route('/feedback')
 def feedback():
     records = [x for x in mongo.db.feedback.find()]
-    return unescape_allowed_tags(render_template('feedback.html', title='Отзывы', feedback=records))
+    for record in records:
+        record['text'] = unescape_allowed_tags(str(escape(record['text'])))
+    return render_template('feedback.html', title='Отзывы', feedback=records)
 
 @app.route('/logout')
 @login_required
@@ -159,15 +157,15 @@ def stuff():
     return render_template('stuff.html', title='Штуки', requests=requests)
 
 @app.route('/images/<image>')
-def image(image):
+def get_image(image):
     path = os.path.abspath('app/images/' + image)
     if not os.path.isfile(path) and (path.endswith('.png') or path.endswith('.jpg')):
-        return render_template('404.html', title='Четыреста четыре'), 404
+        return 'атата'
     return send_file(path, mimetype='image/jpeg')
 
 @app.route('/gallery/<img_id>')
 @app.route('/gallery')
-def gallery(img_id = None):
+def gallery(img_id=None):
     min_images = sorted(['/images/' + x for x in os.listdir('app/images') if x.startswith('min')])
     images = sorted(['/images/' + x for x in os.listdir('app/images') if not x.startswith('min')])
     form = EditFeedbackForm()

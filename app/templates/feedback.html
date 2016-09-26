@@ -6,7 +6,7 @@
             <li>
                 От: {{ record['from'] }}, {{ record['age'] }} годиков<br>
                 Дата: {{ record['date'] }} UTC<br>
-                {{ record['text'] }}<br>
+                {{ record['text']|safe }}<br>
                 -----------------------
             </li>
         {% endfor %}
