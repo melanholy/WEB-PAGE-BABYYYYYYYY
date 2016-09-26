@@ -25,7 +25,7 @@ def after_request(response):
     if request.method == 'GET' and not request.path.startswith('/static') and \
        not request.path.startswith('/images') and not request.path == '/stats' \
        and not request.path == '/':
-        if BLOCKED_USERS.get(request.remote_addr) and time.time() - BLOCKED_USERS[request.remote_addr] < 60:
+        if BLOCKED_USERS.get(request.remote_addr) and time.time() - BLOCKED_USERS[request.remote_addr] < 120:
             return response
         if BLOCKED_USERS.get(request.remote_addr):
             del BLOCKED_USERS[request.remote_addr]
@@ -33,7 +33,7 @@ def after_request(response):
             'time': {'$gt': time.time() - 10},
             'address': request.remote_addr
         }).count()
-        if recent_hits_count > 4:
+        if recent_hits_count > 15:
             BLOCKED_USERS[request.remote_addr] = time.time()
             return response
         mongo.db.hits.save({
