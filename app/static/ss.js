@@ -7,7 +7,7 @@ function send_ss(csrf) {
                '&path=' + encodeURIComponent(window.location.pathname) +
                '&ua=' + encodeURIComponent(navigator.userAgent);
 
-    xhr.open('POST', '/send_ss', true);
+    xhr.open('POST', '/ss', true);
     xhr.setRequestHeader(
         'Content-Type',
         'application/x-www-form-urlencoded'

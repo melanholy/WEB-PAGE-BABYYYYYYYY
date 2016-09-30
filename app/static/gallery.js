@@ -14,6 +14,12 @@ function expandImage(id) {
     setImage();
 }
 
+function setBackground() {
+    href = document.getElementById('image-big').getAttribute('src');
+    document.body.style.backgroundImage = 'url("' + href + '")';
+    document.cookie = "back="+href+"; expires=0; path=/";
+}
+
 function shrinkImage() {
     var hids = document.getElementsByClassName('hid');
     for (var i = 0; i < hids.length; i++)
@@ -111,7 +117,7 @@ function onResize() {
     var com = document.getElementById('comments');
     var com_div = document.getElementById('comments-div');
     var div = document.getElementById('image-big-div');
-    com.style.height = (com_div.offsetHeight - 130) + 'px';
+    com.style.height = (com_div.offsetHeight - 145) + 'px';
     if (window.innerWidth < 992)
         wrp.style.maxHeight = pic.height + 'px';
     else

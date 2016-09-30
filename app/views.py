@@ -21,34 +21,43 @@ BLOCKED_USERS = {}
 @app.after_request
 def after_request(response):
     response.headers['Server'] = 'supa dupa servah'
-
-    if request.method == 'GET' and not request.path.startswith('/static') and \
-       not request.path.startswith('/images') and not request.path == '/stats' \
-       and not request.path == '/':
-        if BLOCKED_USERS.get(request.remote_addr) and time.time() - BLOCKED_USERS[request.remote_addr] < 120:
-            return response
-        if BLOCKED_USERS.get(request.remote_addr):
-            del BLOCKED_USERS[request.remote_addr]
-        recent_hits_count = mongo.db.hits.find({
-            'time': {'$gt': time.time() - 10},
-            'address': request.remote_addr
-        }).count()
-        if recent_hits_count > 15:
-            BLOCKED_USERS[request.remote_addr] = time.time()
-            return response
-        mongo.db.hits.save({
-            'time': int(time.time()),
-            'address': request.remote_addr,
-            'path': request.path
-        })
-        last_record = mongo.db.visits.find_one({'address': request.remote_addr}, sort=[('$natural', -1)])
-        if not last_record or time.time() - last_record['time'] > 1800:
-            mongo.db.visits.save({
-                'address': request.remote_addr,
-                'time': int(time.time())
-            })
-
     return response
+
+@app.route('/ss', methods=['POST'])
+def ss():
+    if 'ss' not in request.form or 'path' not in request.form \
+        or 'ua' not in request.form:
+        return 'атата'
+    if not request.form['path'][1:] in [x.endpoint for x in app.url_map.iter_rules()]:
+        return 'атата'
+    if BLOCKED_USERS.get(request.remote_addr) and time.time() - BLOCKED_USERS[request.remote_addr] < 120:
+        return 'ok'
+    if BLOCKED_USERS.get(request.remote_addr):
+        del BLOCKED_USERS[request.remote_addr]
+
+    recent_hits_count = mongo.db.hits.find({
+        'time': {'$gt': time.time() - 10},
+        'address': request.remote_addr
+    }).count()
+    if recent_hits_count > 15:
+        BLOCKED_USERS[request.remote_addr] = time.time()
+        return response
+
+    mongo.db.hits.save({
+        'time': int(time.time()),
+        'address': request.remote_addr,
+        'path': request.form['path'],
+        'ss': request.form['ss'],
+        'ua': request.form['ua']
+    })
+
+    last_record = mongo.db.visits.find_one({'address': request.remote_addr}, sort=[('$natural', -1)])
+    if not last_record or time.time() - last_record['time'] > 1800:
+        mongo.db.visits.save({
+            'address': request.remote_addr,
+            'time': int(time.time())
+        })
+    return 'ok'
 
 @app.route('/robots.txt')
 def robots():
@@ -82,6 +91,7 @@ def register():
     form = RegisterForm(request.form)
     if request.method == 'POST' and form.validate():
         if User.register_user(form.username.data, form.password.data):
+            flash('Теперь вы можете войти с указанными данными.')
             return redirect('/login')
         flash('Пользователь с таким именем уже зарегистрирован.')
 

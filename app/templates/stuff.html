@@ -23,7 +23,10 @@
         <li>
             {{ request.address }}<br>
             {{ request.path }}<br>
-            {{ request.time }}
+            {{ request.time }}<br>
+            {% if 'ss' in request %}
+                {{ request.ss }}, {{ request.ua }}
+            {% endif %}
         </li>
     {% endfor %}
     </ul>
