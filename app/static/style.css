@@ -37,6 +37,7 @@ body {
     display: inline-block;
     margin-left: -5px;
     width: 128px;
+    background: #222;
 }
 @media(max-width: 411px) {
     .menu-item {
