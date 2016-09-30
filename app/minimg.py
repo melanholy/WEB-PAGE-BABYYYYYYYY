@@ -10,7 +10,7 @@ for filename in os.listdir('images'):
     ratio = image.width / image.height
     if ratio < 1:
         image.thumbnail((150, 150 / ratio), Image.ANTIALIAS)
-        
+
         image.crop((0, 0, 150, 150)).save('images/min_' + filename)
     else:
         print(filename, image.size)
