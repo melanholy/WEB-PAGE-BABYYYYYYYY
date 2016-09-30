@@ -159,7 +159,7 @@ def stuff():
 @app.route('/images/<image>')
 def get_image(image):
     path = os.path.abspath('app/images/' + image)
-    if not os.path.isfile(path) and (path.endswith('.png') or path.endswith('.jpg')):
+    if not os.path.isfile(path) or (not path.endswith('.png') and not path.endswith('.jpg')):
         return 'атата'
     return send_file(path, mimetype='image/jpeg')
 
@@ -181,7 +181,7 @@ def load_comments():
     picture = request.args['filename']
     comments = mongo.db.comments.find_one({'filename': picture})
     if not comments:
-        return jsonify([])
+        return '[]'
 
     return jsonify(comments['comments'])
 
@@ -217,7 +217,7 @@ def nocache(view):
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '-1'
         return response
-        
+
     return update_wrapper(no_cache, view)
 
 @app.route('/stats')
