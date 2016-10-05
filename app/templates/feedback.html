@@ -1,17 +1,18 @@
 {% extends "base.html" %}
+
 {% block body %}
     {% if feedback %}
-        <ul>
+        <ul style="padding-left: 20px;">
         {% for record in feedback %}
             <li>
                 От: {{ record['from'] }}, {{ record['age'] }} годиков<br>
                 Дата: {{ record['date'] }} UTC<br>
                 {{ record['text']|safe }}<br>
-                -----------------------
+                <hr>
             </li>
         {% endfor %}
         </ul>
     {% else %}
-        Пока здесь ничего нет.
+        Пока тут ничего нет.
     {% endif %}
 {% endblock %}

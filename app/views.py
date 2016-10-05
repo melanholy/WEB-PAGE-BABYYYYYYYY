@@ -23,8 +23,8 @@ def after_request(response):
     response.headers['Server'] = 'supa dupa servah'
     return response
 
-@app.route('/ss', methods=['POST'])
-def ss():
+@app.route('/visit', methods=['POST'])
+def visit():
     if 'ss' not in request.form or 'path' not in request.form \
         or 'ua' not in request.form:
         return 'атата'

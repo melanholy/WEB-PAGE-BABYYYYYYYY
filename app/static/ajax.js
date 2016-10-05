@@ -9,7 +9,6 @@ function handleResponseGet(xhr) {
             author.className = 'author';
             author.innerHTML = data[i]['author'];
             text = document.createElement('p');
-            text.className = 'com-text';
             text.innerHTML = data[i]['text'];
             date = document.createElement('p');
             date.className = 'com-date';
@@ -51,8 +50,8 @@ function sendComment() {
 
     var xhr = new XMLHttpRequest();
 
-    var body = 'id_=' + encodeURIComponent(id) + 
-               '&csrf_token=' + encodeURIComponent(csrf) + 
+    var body = 'id_=' + encodeURIComponent(id) +
+               '&csrf_token=' + encodeURIComponent(csrf) +
                '&text=' + encodeURIComponent(text);
 
     xhr.open("POST", '/comment', true);

@@ -11,16 +11,16 @@ if (!document.getElementsByClassName) {
 
 function expandImage(id) {
     window.history.pushState({}, "", '/' + 'gallery/' + id);
-    setImage();
+    toggleBigImage();
 }
 
-function setBackground() {
+function setAsBackground() {
     href = document.getElementById('image-big').getAttribute('src');
     document.body.style.backgroundImage = 'url("' + href + '")';
     document.cookie = "back="+href+"; expires=0; path=/";
 }
 
-function shrinkImage() {
+function hideBigImage() {
     var hids = document.getElementsByClassName('hid');
     for (var i = 0; i < hids.length; i++)
         hids[i].style.display = 'none';
@@ -39,7 +39,7 @@ document.onkeydown = function(event) {
         else if (event.keyCode == 37)
             next = parseInt(el.getAttribute('data-id')) - 1;
         else if (event.keyCode == 27) {
-            shrinkImage();
+            hideBigImage();
             return;
         }
         else
@@ -49,7 +49,7 @@ document.onkeydown = function(event) {
             next = pics_len - 1;
         next = next % pics_len;
         window.history.pushState({}, "", '/gallery/' + next);
-        setImage();
+        toggleBigImage();
     }
     else {
         if (event.keyCode == 112) {
@@ -70,7 +70,7 @@ document.onkeydown = function(event) {
     }
 }
 
-function setImage() {
+function toggleBigImage() {
     var hids = document.getElementsByClassName('hid');
     var loc = document.location.toString();
     if (loc[loc.length - 1] == 'y') {
@@ -107,21 +107,6 @@ function setImage() {
     document.getElementById('id_').setAttribute('value', pic_name);
 
     getComments(pic_name);
-
-    onResize();
-}
-
-function onResize() {
-    var wrp = document.getElementById('big-img-wrapper');
-    var pic = document.getElementById('image-big');
-    var com = document.getElementById('comments');
-    var com_div = document.getElementById('comments-div');
-    var div = document.getElementById('image-big-div');
-    com.style.height = (com_div.offsetHeight - 145) + 'px';
-    if (window.innerWidth < 992)
-        wrp.style.maxHeight = pic.height + 'px';
-    else
-        wrp.style.maxHeight = null;
 }
 
 function addEvent(event, func) {
@@ -134,13 +119,9 @@ function addEvent(event, func) {
 }
 
 addEvent('popstate', function(event) {
-    setImage();
-});
-
-addEvent('resize', function(event){
-    onResize();
+    toggleBigImage();
 });
 
 addEvent('load', function(event){
-    setImage();
+    toggleBigImage();
 });

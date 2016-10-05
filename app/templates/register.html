@@ -6,17 +6,16 @@
 {% endblock %}
 
 {% block body %}
-<div style="display: inline-block; width: 100%;">
-    <div class="col-lg-offset-4 col-lg-4 col-sm-offset-3 col-sm-6">
-        {{ macros.flashes(form) }}
-        <span style="font-size: 10px;">Регистрация:</span>
-        <form action="/register" method="POST">
-            {{ form.csrf_token }}
-            {{ macros.input(form.username(class_='form-control', pattern='.{1,25}', title='От одного до 25 символов', required=True), 'Имя') }}
-            {{ macros.input(form.password(class_='form-control', required=True), 'Пароль') }}
-            {{ macros.input(form.confirm(class_='form-control', required=True), 'Повторите пароль') }}
-            <input type="submit" value="Зарегистрироваться">
-        </form>
-    </div>
+<div class="col-lg-offset-4 col-lg-4 col-sm-offset-3 col-sm-6">
+    {{ macros.flashes(form) }}
+    <span style="font-size: 10px;">Регистрация:</span>
+    <form action="/register" method="POST">
+        {{ form.csrf_token }}
+        {{ macros.input(form.username(class_='form-control', pattern='.{1,25}', title='От одного до 25 символов', required=True), 'Имя') }}
+        {{ macros.input(form.password(class_='form-control', required=True), 'Пароль') }}
+        {{ macros.input(form.confirm(class_='form-control', required=True), 'Повторите пароль') }}
+        <input type="submit" value="Зарегистрироваться">
+    </form>
 </div>
+<div style="clear: both;"></div>
 {% endblock %}

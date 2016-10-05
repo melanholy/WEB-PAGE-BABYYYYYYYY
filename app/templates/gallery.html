@@ -8,28 +8,28 @@
 {% endblock %}
 
 {% block body %}
-<div class="hid" id="shade" onclick="shrinkImage()"></div>
-<img src="{{ url_for('static', filename='cross.png') }}" class="hid" onclick="shrinkImage()" id="cross" alt="закрыть">
+<div class="hid" id="shade" onclick="hideBigImage()"></div>
+<img src="{{ url_for('static', filename='cross.png') }}" class="hid" onclick="hideBigImage()" id="cross" alt="закрыть">
 <div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs msb" id="help">
     Вы находитесь в галерее. Помощь по использованию:<br>
     <ol>
-    <li>Нажмите на миниатюру изображения, чтобы открыть его полную версию.</li>
-    <li>ESC - закрыть большое изображение.</li>
-    <li>По картинкам можно перемещаться стрелками на клавиатуре.</li>
-    <li>F1 - открыть/закрыть окно помощи.</li>
+        <li>Нажмите на миниатюру изображения, чтобы открыть его полную версию.</li>
+        <li>ESC - закрыть большое изображение.</li>
+        <li>По картинкам можно перемещаться стрелками на клавиатуре.</li>
+        <li>F1 - открыть/закрыть окно помощи.</li>
     </ol>
 </div>
 <div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs hid msb" id="image-big-div">
     <div class="col-sm-12 col-xs-12 col-md-8" id="big-img-wrapper">
+        <button onclick="setAsBackground();" style="position: absolute; top: 0; right: 0; z-index: 1000;">Сделать фоновой</button>
         <img class="img-responsive" alt="loading" id="image-big" src="">
         <img src="" id="img-preload" style="display: none;" alt="если вы можете это читать, сделайте мне бутерброд">
     </div>
     <div class="col-sm-12 col-xs-12 col-md-4" id="comments-div">
-        <button onclick="setBackground();">Сделать фоновой</button>
         <div id="comments" class="msb">
-            
+
         </div>
-        <div style="height: 120px; padding: 0px 5px 0px 5px">
+        <div style="height: 120px; padding: 0px 5px 0px 5px; bottom: 8px; position: absolute; width: 100%;">
             {{ form.csrf_token }}
             {{ form.id_() }}
             {% if current_user.is_authenticated %}

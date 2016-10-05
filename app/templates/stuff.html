@@ -11,14 +11,14 @@
 
 {% block body %}
     <form action="/stuff">
-        Отфильтровать по IP адресу: 
+        Отфильтровать по IP адресу:
         <input name="filter" required pattern="(\d{1,3}\.){3}\d{1,3}" title="Корректный IP адрес" placeholder="{% if request.args.get('filter') %}{{ request.args.get('filter') }}{% endif %}">
         <input type="submit" value="Применить" style="display: inline;">
     </form>
     <form action="/stuff">
         <input type="submit" value="Сбросить">
     </form>
-    <ul style="margin-top: 10px;">
+    <ul style="margin-top: 10px; padding-left: 20px;">
     {% for request in requests %}
         <li>
             {{ request.address }}<br>
@@ -28,6 +28,7 @@
                 {{ request.ss }}, {{ request.ua }}
             {% endif %}
         </li>
+        <hr>
     {% endfor %}
     </ul>
 {% endblock %}

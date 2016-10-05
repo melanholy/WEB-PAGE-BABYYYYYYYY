@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% import 'macros.html' as macros %}
+
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form.css') }}">
     <style type="text/css">
@@ -6,8 +8,6 @@
             padding: 2px;
             height: 40px;
             background: #292929;
-            border: 1px solid #444;
-            margin: -1px;
             cursor: pointer;
         }
         .panel-head:hover {
@@ -17,42 +17,53 @@
             height: 0px;
             display: block;
             overflow: hidden;
+            margin: 0px -1px;
             -webkit-transition: height 0.2s linear;
             -moz-transition: height 0.2s linear;
             -ms-transition: height 0.2s linear;
             -o-transition: height 0.2s linear;
             transition: height 0.2s linear;
         }
+        .collapse form input[type=submit] {
+            margin: 0px 0px 0px 5px;
+            width: 100px;
+            cursor: default;
+        }
+        .collapse form textarea {
+            height: 100px;
+        }
+        .panel-wrapper {
+            border: 1px solid #444;
+            margin-bottom: 9px;
+        }
     </style>
     <script type="text/javascript">
         function toggle(id) {
             var el = document.getElementById(id);
             if (el.style.height == '0px' || el.style.height == '')
-                el.style.height = '135px';
+                el.style.height = '130px';
             else
                 el.style.height = '0px';
         }
     </script>
 {% endblock %}
+
 {% block body %}
 Тут можно отредактировать оставленные вами отзывы.
 {% for record in feedback %}
-    <div style="border: 1px solid #444; margin-bottom: 9px;">
-        <div class="panel-head" onclick="toggle('collapse{{ loop.index }}');">
-            <strong>{{ record['date'] }}</strong><br>
-            {{ record['text'][:100] }}
-        </div>
-        <div id="collapse{{ loop.index }}" class="collapse">
-            <form method="POST" action="/user">
-                {{ form.csrf_token }}
-                {{ form.id_(value=record['_id']) }}
-                <div class="input-group">
-                    {{ form.text(class_='form-control', data=record['text'], style="height: 100px;") }}<br>
-                    <span class="input-group-addon">Новый текст</span>
-                </div>
-                <input type="submit" value="Подтвердить" style="margin: 5px; width: 100px; cursor: default" >
-            </form>
-        </div>
+<div class="panel-wrapper">
+    <div class="panel-head" onclick="toggle('collapse{{ loop.index }}');">
+        <strong>{{ record['date'] }}</strong><br>
+        {{ record['text'][:100] }}
     </div>
+    <div id="collapse{{ loop.index }}" class="collapse">
+        <form method="POST" action="/user">
+            {{ form.csrf_token }}
+            {{ form.id_(value=record['_id']) }}
+            {{ macros.input(form.text(class_='form-control', data=record['text']), 'Новый текст') }}
+            <input type="submit" value="Подтвердить">
+        </form>
+    </div>
+</div>
 {% endfor %}
 {% endblock %}

@@ -1,19 +1,11 @@
 {% extends "base.html" %}
 {% block head %}
-<style type="text/css">
-    tr {
-        text-align: center;
-    }
-</style>
 {% endblock %}
 {% block body %}
-    <div style="display: inline-block; width: 100%;">
-        <div class="col-sm-3"></div>
-        <div class="col-sm-6" style="text-align: center;">
-                <h1>Страница не найдена</h1><br>
-                То, что вы ищете, не здесь.<br>
-                <a href="{{ url_for('index') }}">Сходите куда-нибудь еще</a>
-        </div>
-        <div class="col-sm-3"></div>
+    <div class="col-md-offset-3 col-sm-6" style="text-align: center;">
+            <h1>Страница не найдена</h1><br>
+            То, что вы ищете, не здесь.<br>
+            <a href="{{ url_for('index') }}">Сходите куда-нибудь еще</a>
     </div>
+    <div style="clear: both;"></div>
 {% endblock %}

@@ -11,13 +11,11 @@
     cursor: pointer;
 }
 #image-big-div {
-    z-index: 100;
     position: fixed;
     display: none;
     padding: 0px;
 }
 #help {
-    z-index: 200;
     position: fixed;
     display: none;
     padding: 0px;
@@ -34,10 +32,8 @@
     background-position: center;
 }
 #image-big {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    margin: 0 auto;
+    vertical-align: middle;
     max-height: 100%;
     background-image: url(/static/spinner.gif);
     background-repeat: no-repeat;
@@ -49,7 +45,6 @@
 #big-img-wrapper {
     padding: 0px;
     background: #181818;
-    height: 100%;
 }
 @media(max-width:544px) {
     .img-wrapper {
@@ -88,14 +83,24 @@
 }
 #comments-div {
     background: #242424;
-    display: inline-block;
     padding: 0px;
-    height: 100%;
 }
 #comments {
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 5px;
+    padding: 5px 5px 133px 5px;
+    min-height: 238px;
+}
+@media (min-width: 991px) {
+    #comments {
+        max-height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    #comments-div {
+        height: 100%;
+    }
+    #big-img-wrapper {
+        height: 100%;
+    }
 }
 p {
     margin: 0px;
@@ -105,10 +110,6 @@ p {
 }
 .com-date {
     font-size: 9px;
-}
-hr {
-    border-color: #444;
-    margin: 15px 0px 15px 0px;
 }
 *:disabled {
     background: #333;
