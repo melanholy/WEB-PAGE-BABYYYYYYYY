@@ -3,12 +3,13 @@ import time
 import os
 import io
 import re
+import json
 from functools import wraps, update_wrapper
 from app import app, mongo
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
 from flask import render_template, send_from_directory, redirect, request, \
-                  flash, send_file, jsonify, make_response
+                  flash, send_file, make_response
 from flask_login import login_required, login_user, logout_user, current_user
 from wand.image import Image
 from wand.drawing import Drawing, Color
@@ -189,11 +190,15 @@ def load_comments():
     if not 'filename' in request.args:
         return 'атата'
     picture = request.args['filename']
-    comments = mongo.db.comments.find_one({'filename': picture})
+    comments = mongo.db.comments.find_one({'filename': picture})['comments']
+
     if not comments:
         return '[]'
 
-    return jsonify(comments['comments'])
+    for com in comments:
+        com['text'] = escape(com['text'])
+        com['author'] = escape(com['author'])
+    return json.dumps(comments)
 
 @app.route('/comment', methods=['POST'])
 def comment():
