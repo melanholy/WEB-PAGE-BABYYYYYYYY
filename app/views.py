@@ -16,8 +16,13 @@ from wand.drawing import Drawing, Color
 from bson.objectid import ObjectId
 from jinja2 import escape
 
-IP_RE = re.compile(r'^(\d{1,3}\.){3}\d{1,3}$')
+HACK_DETECTED_MSG = 'Ваша попытка взлома зарегистрирована и направлена куда надо.'
 BLOCKED_USERS = {}
+IP_RE = re.compile(r'^(\d{1,3}\.){3}\d{1,3}$')
+B_TAG = re.compile(r'&lt;b&gt;(.+?)&lt;/b&gt;')
+I_TAG = re.compile(r'&lt;i&gt;(.+?)&lt;/i&gt;')
+IMG_TAG = re.compile(r'&lt;img src=&#34;(.+?)&#34;&gt;')
+BR_TAG = re.compile(r'&lt;br&gt;')
 
 @app.after_request
 def after_request(response):
@@ -28,9 +33,9 @@ def after_request(response):
 def visit():
     if 'ss' not in request.form or 'path' not in request.form \
         or 'ua' not in request.form:
-        return 'атата'
+        return HACK_DETECTED_MSG
     if not request.form['path'][1:] in [x.endpoint for x in app.url_map.iter_rules()]:
-        return 'атата'
+        return HACK_DETECTED_MSG
     if BLOCKED_USERS.get(request.remote_addr) and time.time() - BLOCKED_USERS[request.remote_addr] < 120:
         return 'ok'
     if BLOCKED_USERS.get(request.remote_addr):
@@ -113,11 +118,6 @@ def leave_feedback():
 
     return render_template('leave_feedback.html', title='Оставить отзыв', form=form)
 
-B_TAG = re.compile(r'&lt;b&gt;(.+?)&lt;/b&gt;')
-I_TAG = re.compile(r'&lt;i&gt;(.+?)&lt;/i&gt;')
-IMG_TAG = re.compile(r'&lt;img src=&#34;(.+?)&#34;&gt;')
-BR_TAG = re.compile(r'&lt;br&gt;')
-
 def unescape_allowed_tags(text):
     text = IMG_TAG.sub(r'<img src="\1" style="max-width: 360px;">', text)
     text = B_TAG.sub(r'<b>\1</b>', text)
@@ -143,13 +143,14 @@ def logout():
 def user_page():
     form = EditFeedbackForm()
     if request.method == 'POST' and form.validate():
-        if mongo.db.feedback.find_one({'_id': ObjectId(form.id_.data)}):
+        record = mongo.db.feedback.find_one({'_id': ObjectId(form.id_.data)})
+        if record and record['from'] == current_user.username:
             mongo.db.feedback.update({
                 '_id': ObjectId(form.id_.data)},
                 {'$set': {'text': form.text.data}}
             )
         else:
-            return 'атата'
+            return HACK_DETECTED_MSG
     cursor = mongo.db.feedback.find({'from': current_user.username})
     return render_template('user.html', title='Настройки', feedback=cursor, form=form)
 
@@ -157,7 +158,7 @@ def user_page():
 def stuff():
     if 'filter' in request.args:
         if not IP_RE.match(request.args['filter']):
-            return 'атата'
+            return HACK_DETECTED_MSG
         requests = [x for x in mongo.db.hits.find({'address': request.args['filter']})]
     else:
         requests = [x for x in mongo.db.hits.find()]
@@ -171,14 +172,18 @@ def stuff():
 def get_image(image):
     path = os.path.abspath('app/images/' + image)
     if not os.path.isfile(path) or (not path.endswith('.png') and not path.endswith('.jpg')):
-        return 'атата'
+        return HACK_DETECTED_MSG
     return send_file(path, mimetype='image/jpeg')
 
 @app.route('/gallery/<img_id>')
 @app.route('/gallery')
 def gallery(img_id=None):
+    if img_id and not img_id.isdigit():
+        return HACK_DETECTED_MSG
     min_images = sorted(['/images/' + x for x in os.listdir('app/images') if x.startswith('min')])
     images = sorted(['/images/' + x for x in os.listdir('app/images') if not x.startswith('min')])
+    if img_id and int(img_id) >= len(images):
+        return HACK_DETECTED_MSG
     form = EditFeedbackForm()
     return render_template(
         'gallery.html', title='Картиночки',
@@ -188,26 +193,29 @@ def gallery(img_id=None):
 @app.route('/comments')
 def load_comments():
     if not 'filename' in request.args:
-        return 'атата'
+        return HACK_DETECTED_MSG
     picture = request.args['filename']
-    comments = mongo.db.comments.find_one({'filename': picture})['comments']
+    record = mongo.db.comments.find_one({'filename': picture})
 
-    if not comments:
+    if not record:
         return '[]'
 
+    comments = record['comments']
     for com in comments:
         com['text'] = escape(com['text'])
         com['author'] = escape(com['author'])
+
     return json.dumps(comments)
 
 @app.route('/comment', methods=['POST'])
+@login_required
 def comment():
     form = EditFeedbackForm()
-    if current_user.is_authenticated and form.validate_on_submit():
+    if form.validate_on_submit():
         if not mongo.db.comments.find_one({'filename': form.id_.data}):
             path = os.path.abspath('app/images/' + form.id_.data)
-            if not os.path.isfile(path):
-                return 'атата'
+            if not os.path.isfile(path) or (not path.endswith('.png') and not path.endswith('.jpg')):
+                return HACK_DETECTED_MSG
             else:
                 mongo.db.comments.save({'filename': form.id_.data, 'comments': []})
         cur_time = datetime.datetime.fromtimestamp(
@@ -217,8 +225,10 @@ def comment():
             {'filename': form.id_.data},
             {'$push': {'comments': {'date': cur_time, 'text': form.text.data, 'author': current_user.username}}}
         )
+        if '<img' in form.text.data or '<script' in form.text.data:
+            return HACK_DETECTED_MSG
         return 'ok'
-    return 'атата'
+    return HACK_DETECTED_MSG
 
 def nocache(view):
     @wraps(view)
@@ -239,7 +249,7 @@ def nocache(view):
 @nocache
 def stats():
     if not request.args.get('path'):
-        return 'атата'
+        return HACK_DETECTED_MSG
 
     now = datetime.datetime.now()
     beginning_of_day = datetime.datetime.combine(now.date(), datetime.time(0))

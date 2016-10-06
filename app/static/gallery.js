@@ -9,6 +9,60 @@ if (!document.getElementsByClassName) {
     }
 }
 
+function addCommentsToDocument(xhr) {
+    console.log(xhr.responseText);
+    var data = JSON.parse(xhr.responseText);
+    var comment_section = document.getElementById('comments');
+    comment_section.innerHTML = '';
+    for (var i = 0; i < data.length; i++) {
+        var author = document.createElement('p');
+        author.className = 'author';
+        author.innerHTML = data[i]['author'];
+        var text = document.createElement('p');
+        text.innerHTML = data[i]['text'];
+        var date = document.createElement('p');
+        date.className = 'com-date';
+        date.innerHTML = data[i]['date'];
+
+        var node = document.createElement('div');
+        node.appendChild(author);
+        node.appendChild(text);
+        node.appendChild(date);
+        node.appendChild(document.createElement('hr'));
+
+        comment_section.appendChild(node);
+    }
+}
+
+function getComments(filename) {
+    var path = '/comments?filename=' + encodeURIComponent(filename);
+    ajaxSend(path, 'GET', [], addCommentsToDocument);
+}
+
+function sendComment() {
+    var textarea = document.getElementById('text');
+    if (!textarea.value) {
+        return;
+    }
+
+    var text = textarea.value;
+    var id = document.getElementById('id_').getAttribute('value');
+    var csrf = document.getElementById('csrf_token').getAttribute('value');
+    var data = {'id_': id, 'csrf_token': csrf, 'text': text};
+
+    textarea.value = '';
+
+    ajaxSend(
+        '/comment', 'POST', data,
+        function(xhr) {
+            if (xhr.responseText != 'ok')
+                document.write(xhr.responseText);
+            else
+                getComments(id);
+        }
+    );
+}
+
 function expandImage(id) {
     window.history.pushState({}, "", '/' + 'gallery/' + id);
     toggleBigImage();
