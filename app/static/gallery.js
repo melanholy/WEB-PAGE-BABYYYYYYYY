@@ -10,7 +10,6 @@ if (!document.getElementsByClassName) {
 }
 
 function addCommentsToDocument(xhr) {
-    console.log(xhr.responseText);
     var data = JSON.parse(xhr.responseText);
     var comment_section = document.getElementById('comments');
     comment_section.innerHTML = '';
@@ -74,7 +73,7 @@ function setAsBackground() {
     document.cookie = "back="+href+"; expires=0; path=/";
 }
 
-function hideBigImage() {
+function hideModals() {
     var hids = document.getElementsByClassName('hid');
     for (var i = 0; i < hids.length; i++)
         hids[i].style.display = 'none';
@@ -83,51 +82,47 @@ function hideBigImage() {
     window.history.pushState({}, "", '/gallery');
 }
 
+function showHelp() {
+    var help = document.getElementById('help');
+    var cross = document.getElementById('cross');
+    var shade = document.getElementById('shade');
+    cross.style.display = 'block';
+    shade.style.display = 'block';
+    help.style.display = 'block';
+}
+
 document.onkeydown = function(event) {
     var el = document.getElementById('image-big-div');
     if (el.style.display != 'none') {
         var el = document.getElementById('image-big');
-        var next = 0;
+        var next = parseInt(el.getAttribute('data-id'));
         if (event.keyCode == 39)
-            next = parseInt(el.getAttribute('data-id')) + 1;
+            next++;
         else if (event.keyCode == 37)
-            next = parseInt(el.getAttribute('data-id')) - 1;
+            next--;
         else if (event.keyCode == 27) {
-            hideBigImage();
+            hideModals();
             return;
         }
         else
             return;
+
         pics_len = document.getElementsByClassName('gal-img').length;
         if (next < 0)
             next = pics_len - 1;
         next = next % pics_len;
+
         window.history.pushState({}, "", '/gallery/' + next);
         toggleBigImage();
     }
-    else {
-        if (event.keyCode == 112) {
-            var help = document.getElementById('help');
-            var cross = document.getElementById('cross');
-            var shade = document.getElementById('shade');
-            if (help.style.display != 'block') {
-                cross.style.display = 'block';
-                shade.style.display = 'block';
-                help.style.display = 'block';
-            }
-            else {
-                help.style.display = 'none';
-                cross.style.display = 'none';
-                shade.style.display = 'none';
-            }
-        }
-    }
+
+    if (event.keyCode == 112)
+        showHelp();
 }
 
 function toggleBigImage() {
     var hids = document.getElementsByClassName('hid');
-    var loc = document.location.toString();
-    if (loc[loc.length - 1] == 'y') {
+    if (window.location.pathname == '/gallery') {
         for (var i = 0; i < hids.length; i++)
             hids[i].style.display = 'none';
         return;
@@ -136,8 +131,8 @@ function toggleBigImage() {
         for (var i = 0; i < hids.length; i++)
             hids[i].style.display = 'block';
 
-    var id = document.location.toString().substring(
-        document.location.toString().lastIndexOf('/') + 1
+    var id = window.location.pathname.substring(
+        window.location.pathname.lastIndexOf('/') + 1
     );
     var el = document.getElementById('image-big');
     var img = document.getElementById(id);
@@ -151,6 +146,7 @@ function toggleBigImage() {
     if (next < 0)
         next = pics_len - 1;
     next = next % pics_len;
+
     var img_preload = document.getElementById('img-preload');
     var next_img = document.getElementById(next);
     var next_href = next_img.getAttribute('data-big');

@@ -31,20 +31,28 @@
     background-repeat: no-repeat;
     background-position: center;
 }
-#image-big {
-    margin: 0 auto;
+#for-alignment {
+    display: inline-block;
     vertical-align: middle;
+    height: 100%;
+}
+#image-big {
+    margin-left: -3px;
+    vertical-align: middle;
+    display: inline-block;
     max-height: 100%;
     background-image: url(/static/spinner.gif);
     background-repeat: no-repeat;
     background-position: center;
 }
-.img-wrapper {
-    padding: 8px;
-}
 #big-img-wrapper {
+    text-align: center;
+    white-space: nowrap;
     padding: 0px;
     background: #181818;
+}
+.img-wrapper {
+    padding: 8px;
 }
 @media(max-width:544px) {
     .img-wrapper {
@@ -54,6 +62,11 @@
 @media(max-width:991px) {
     #image-big-div {
         top: 40px;
+    }
+    #comments:after {
+        content: "";
+        height: 133px;
+        display: block;
     }
 }
 @media (min-width: 1300px) {
@@ -86,14 +99,26 @@
     padding: 0px;
 }
 #comments {
-    padding: 5px 5px 133px 5px;
+    padding: 5px 5px 0px 5px;
     min-height: 238px;
+}
+#comment-form {
+    height: 133px;
+    left: 5px;
+    right: 5px;
+    bottom: 0;
+    position: absolute;
+    background: #242424;
 }
 @media (min-width: 991px) {
     #comments {
         max-height: 100%;
         overflow-y: auto;
         overflow-x: hidden;
+        position: absolute;
+        top: 0px;
+        bottom: 133px;
+        width: 100%;
     }
     #comments-div {
         height: 100%;

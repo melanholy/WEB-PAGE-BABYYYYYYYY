@@ -54,6 +54,7 @@ hr {
     background: #232323;
     border: 1px solid #444;
     padding: 15px 10px 20px 10px;
+    margin-bottom: 10px;
 }
 @media(max-width:544px) {
     .content {
