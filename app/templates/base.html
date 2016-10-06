@@ -19,10 +19,10 @@
     {% block head %}
     {% endblock %}
 </head>
-<body onload="registerVisit('{{ csrf_token() }}');">
+<body onload="registerVisit('{{ csrf_token() }}'); getStats();">
     <nav class="header">
         <div class="container">
-            <img src="/stats?path={{ request.path }}" style="margin: 2px 0px 3px 0px;" alt="Статистика посещений"><br>
+            <img src="" id="stats" width="270" height="34" alt="Статистика посещений"><br>
             <ul class="navbar-left">
                 <li class="menu-item"><a href="/index">Обо мне</a></li>
                 <li class="menu-item"><a href="/skills">Навыки</a></li>

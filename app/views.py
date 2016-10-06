@@ -45,7 +45,7 @@ def visit():
         'time': {'$gt': time.time() - 10},
         'address': request.remote_addr
     }).count()
-    if recent_hits_count > 15:
+    if recent_hits_count > 10:
         BLOCKED_USERS[request.remote_addr] = time.time()
         return response
 
@@ -69,9 +69,13 @@ def visit():
 def robots():
     return send_from_directory(app.static_folder, 'robots.txt')
 
+@app.route('/404')
+def not_found():
+    return render_template('404.html', title='Четыреста четыре'), 404
+
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('404.html', title='Четыреста четыре'), 404
+    return redirect('/404')
 
 @app.route('/')
 @app.route('/index')
@@ -248,8 +252,11 @@ def nocache(view):
 @app.route('/stats')
 @nocache
 def stats():
-    if not request.args.get('path'):
+    if not 'path' in request.args or not 'tz' in request.args:
         return HACK_DETECTED_MSG
+    if not request.args['tz'].lstrip("-").isdigit():
+        return HACK_DETECTED_MSG
+    timezone = int(request.args['tz'])
 
     now = datetime.datetime.now()
     beginning_of_day = datetime.datetime.combine(now.date(), datetime.time(0))
@@ -270,8 +277,8 @@ def stats():
     }, sort=[('$natural', -1)], limit=2)]
     if len(last_hits) > 1:
         last_hit = datetime.datetime.fromtimestamp(
-            last_hits[1]['time']
-        ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
+            last_hits[1]['time'] - timezone * 60
+        ).strftime('%Y-%m-%d %H:%M:%S')
     else:
         last_hit = 'не было'
 
@@ -283,17 +290,16 @@ def stats():
         hits_total + ' '*(5 - len(hits_total)),
         hits_today
     )
-    last_hit = 'Последнее посещение этой страницы: {}'.format(last_hit)
+    last_hit = 'Последнее посещение страницы: {}'.format(last_hit)
 
-    data = io.BytesIO()
+    width = 270
+    height = 34
     if request.remote_addr not in BLOCKED_USERS:
-        width = 320
-        height = 34
         text = '\n'.join([visits, hits, last_hit])
     else:
-        width = 100
-        height = 13
         text = 'ДОНАКРУЧИВАЛСЯ'
+
+    data = io.BytesIO()
     with Image(width=width, height=height) as img:
         with Drawing() as draw:
             draw.font_size = 10

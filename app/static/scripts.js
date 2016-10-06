@@ -25,3 +25,11 @@ function registerVisit(csrf) {
     }
     ajaxSend('/visit', 'POST', data, null);
 }
+
+function getStats() {
+	var tz = new Date().getTimezoneOffset();
+	var path = window.location.pathname;
+
+	var stats = document.getElementById('stats');
+	stats.setAttribute('src', '/stats?tz=' + tz + '&path=' + path)
+}

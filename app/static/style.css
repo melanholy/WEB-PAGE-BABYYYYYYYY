@@ -23,6 +23,9 @@ body {
         padding-top: 38px;
     }
 }
+#stats {
+    margin: 2px 0px 3px 0px;
+}
 hr {
     margin: 10px 0px;
     border-color: #444;
