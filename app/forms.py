@@ -6,12 +6,23 @@ from wtforms import StringField, PasswordField, IntegerField, \
                     HiddenField, validators, ValidationError
 
 FIELD_REQUIRED_MSG = 'Обязательное поле'
+AUTO = object()
 
 def check_bad_symbols(form, field):
     for char in field.data:
         code = ord(char)
         if code > 256 and code < 1072 or code > 1105:
             raise ValidationError('Нельзя использовать особые символы.')
+
+class NoIdAttributeMeta(object):
+    def bind_field(self, form, unbound_field, options):
+        unbound_field.kwargs.setdefault('id', AUTO)
+        return super().bind_field(form, unbound_field, options)
+
+    def render_field(self, field, render_kw):
+        if field.id is AUTO:
+            field.id = False
+        return super().render_field(field, render_kw)
 
 class TextArea(object):
     def __call__(self, field, **kwargs):
@@ -25,6 +36,7 @@ class TextArea(object):
         ))
 
 class LoginForm(Form):
+    Meta = NoIdAttributeMeta
     username = StringField('Username', [
         validators.Length(min=1, max=25, message='Максимальная длина имени - 25 символов.'),
         validators.DataRequired(message=FIELD_REQUIRED_MSG)
@@ -34,6 +46,7 @@ class LoginForm(Form):
     ])
 
 class RegisterForm(Form):
+    Meta = NoIdAttributeMeta
     username = StringField('Username', [
         validators.Length(min=1, max=25, message='Максимальная длина имени - 25 символов.'),
         validators.DataRequired(message=FIELD_REQUIRED_MSG),
@@ -58,6 +71,7 @@ FEEDBACK_TEXTAREA = StringField(
 )
 
 class FeedbackForm(Form):
+    Meta = NoIdAttributeMeta
     age = IntegerField('Age', [
         validators.DataRequired(message=FIELD_REQUIRED_MSG),
         validators.NumberRange(min=1, max=999, message='Вы не можете быть старше 999 лет.')
@@ -65,5 +79,6 @@ class FeedbackForm(Form):
     text = FEEDBACK_TEXTAREA
 
 class EditFeedbackForm(Form):
+    Meta = NoIdAttributeMeta
     id_ = HiddenField('Id')
     text = FEEDBACK_TEXTAREA

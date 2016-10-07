@@ -19,10 +19,11 @@
     {% block head %}
     {% endblock %}
 </head>
-<body onload="registerVisit('{{ csrf_token() }}'); getStats();">
+<body>
     <nav class="header">
         <div class="container">
-            <img src="" id="stats" width="270" height="34" alt="Статистика посещений"><br>
+            <div id="stats" style="width: 270px; height: 34px;">
+            </div>
             <ul class="navbar-left">
                 <li class="menu-item"><a href="/index">Обо мне</a></li>
                 <li class="menu-item"><a href="/skills">Навыки</a></li>
@@ -47,5 +48,9 @@
         {% endblock %}
         </div>
     </div>
+    <script type="text/javascript">
+         addStatsToPage();
+         registerVisit('{{ csrf_token() }}');
+    </script>
 </body>
 </html>

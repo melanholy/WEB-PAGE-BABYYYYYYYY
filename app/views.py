@@ -34,7 +34,7 @@ def visit():
     if 'ss' not in request.form or 'path' not in request.form \
         or 'ua' not in request.form:
         return HACK_DETECTED_MSG
-    if not request.form['path'][1:] in [x.endpoint for x in app.url_map.iter_rules()]:
+    if not request.form['path'] in [x.rule for x in app.url_map.iter_rules()]:
         return HACK_DETECTED_MSG
     if BLOCKED_USERS.get(request.remote_addr) and \
        time.time() - BLOCKED_USERS[request.remote_addr] < 120:
@@ -78,7 +78,7 @@ def not_found():
     return render_template('404.html', title='Четыреста четыре'), 404
 
 @app.errorhandler(404)
-def page_not_found(error):
+def error404(error):
     return redirect('/404')
 
 @app.errorhandler(400)
