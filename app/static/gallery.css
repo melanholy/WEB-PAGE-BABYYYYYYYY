@@ -99,7 +99,7 @@
     padding: 0px;
 }
 #comments {
-    padding: 5px 5px 0px 5px;
+    padding: 5px 5px 0px 0px;
     min-height: 238px;
 }
 #comment-form {
@@ -129,9 +129,6 @@
 }
 p {
     margin: 0px;
-}
-.author {
-    font-weight: bold;
 }
 .com-date {
     font-size: 9px;

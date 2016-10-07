@@ -13,23 +13,16 @@ function addCommentsToDocument(xhr) {
     var data = JSON.parse(xhr.responseText);
     var comment_section = document.getElementById('comments');
     comment_section.innerHTML = '';
+    var list = document.createElement('ul');
+    list.className = 'dollar-ul';
+    comment_section.appendChild(list);
     for (var i = 0; i < data.length; i++) {
-        var author = document.createElement('p');
-        author.className = 'author';
-        author.innerHTML = data[i]['author'];
-        var text = document.createElement('p');
-        text.innerHTML = data[i]['text'];
-        var date = document.createElement('p');
-        date.className = 'com-date';
-        date.innerHTML = data[i]['date'];
-
-        var node = document.createElement('div');
-        node.appendChild(author);
-        node.appendChild(text);
-        node.appendChild(date);
-        node.appendChild(document.createElement('hr'));
-
-        comment_section.appendChild(node);
+        var comment = document.createElement('li');
+        comment.innerHTML = '[' + data[i]['author'] + ']<br>';
+        comment.innerHTML += data[i]['text'] + '<br>';
+        comment.innerHTML += '<span class="date">' + data[i]['date'] + '</span>';
+        comment.innerHTML += '<hr>';
+        list.appendChild(comment);
     }
 }
 
