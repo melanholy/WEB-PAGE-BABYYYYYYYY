@@ -39,14 +39,14 @@ function getComments(filename) {
 }
 
 function sendComment() {
-    var textarea = document.getElementById('text');
+    var textarea = document.getElementsByName('text')[0];
     if (!textarea.value) {
         return;
     }
 
     var text = textarea.value;
-    var id = document.getElementById('id_').getAttribute('value');
-    var csrf = document.getElementById('csrf_token').getAttribute('value');
+    var id = document.getElementsByName('id_')[0].getAttribute('value');
+    var csrf = document.getElementsByName('csrf_token')[0].getAttribute('value');
     var data = {'id_': id, 'csrf_token': csrf, 'text': text};
 
     textarea.value = '';
@@ -154,7 +154,7 @@ function toggleBigImage() {
 
     pic_name = href.substring(href.lastIndexOf('/') + 1);
 
-    document.getElementById('id_').setAttribute('value', pic_name);
+    document.getElementsByName('id_')[0].setAttribute('value', pic_name);
 
     getComments(pic_name);
 }
