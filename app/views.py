@@ -81,6 +81,12 @@ def not_found():
 def page_not_found(error):
     return redirect('/404')
 
+@app.errorhandler(400)
+@app.errorhandler(403)
+@app.errorhandler(405)
+def error(error):
+    return HACK_DETECTED_MSG, error.code
+
 @app.route('/')
 @app.route('/index')
 def index():
