@@ -36,7 +36,8 @@ def visit():
         return HACK_DETECTED_MSG
     if not request.form['path'][1:] in [x.endpoint for x in app.url_map.iter_rules()]:
         return HACK_DETECTED_MSG
-    if BLOCKED_USERS.get(request.remote_addr) and time.time() - BLOCKED_USERS[request.remote_addr] < 120:
+    if BLOCKED_USERS.get(request.remote_addr) and \
+       time.time() - BLOCKED_USERS[request.remote_addr] < 120:
         return 'ok'
     if BLOCKED_USERS.get(request.remote_addr):
         del BLOCKED_USERS[request.remote_addr]
@@ -47,7 +48,7 @@ def visit():
     }).count()
     if recent_hits_count > 10:
         BLOCKED_USERS[request.remote_addr] = time.time()
-        return response
+        return 'ok'
 
     mongo.db.hits.save({
         'time': int(time.time()),
@@ -57,7 +58,10 @@ def visit():
         'ua': request.form['ua']
     })
 
-    last_record = mongo.db.visits.find_one({'address': request.remote_addr}, sort=[('$natural', -1)])
+    last_record = mongo.db.visits.find_one(
+        {'address': request.remote_addr},
+        sort=[('$natural', -1)]
+    )
     if not last_record or time.time() - last_record['time'] > 1800:
         mongo.db.visits.save({
             'address': request.remote_addr,
@@ -149,8 +153,8 @@ def user_page():
     if request.method == 'POST' and form.validate():
         record = mongo.db.feedback.find_one({'_id': ObjectId(form.id_.data)})
         if record and record['from'] == current_user.username:
-            mongo.db.feedback.update({
-                '_id': ObjectId(form.id_.data)},
+            mongo.db.feedback.update(
+                {'_id': ObjectId(form.id_.data)},
                 {'$set': {'text': form.text.data}}
             )
         else:
@@ -218,7 +222,8 @@ def comment():
     if form.validate_on_submit():
         if not mongo.db.comments.find_one({'filename': form.id_.data}):
             path = os.path.abspath('app/images/' + form.id_.data)
-            if not os.path.isfile(path) or (not path.endswith('.png') and not path.endswith('.jpg')):
+            if not os.path.isfile(path) or (not path.endswith('.png') and \
+               not path.endswith('.jpg')):
                 return HACK_DETECTED_MSG
             else:
                 mongo.db.comments.save({'filename': form.id_.data, 'comments': []})
@@ -227,7 +232,11 @@ def comment():
         ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
         mongo.db.comments.update(
             {'filename': form.id_.data},
-            {'$push': {'comments': {'date': cur_time, 'text': form.text.data, 'author': current_user.username}}}
+            {'$push': {'comments': {
+                'date': cur_time,
+                'text': form.text.data,
+                'author': current_user.username
+            }}}
         )
         if '<img' in form.text.data or '<script' in form.text.data:
             return HACK_DETECTED_MSG

@@ -13,7 +13,7 @@
     <form action="/leave_feedback" method="POST">
         {{ form.csrf_token }}
         {{ macros.input(form.age(class_='form-control', pattern='[0-9]{1,3}', title='От одной до 3 цифр', required=True), 'Ваш возраст') }}
-        {{ macros.input(form.text(class_='form-control', style='height: 150px;', required=True), 'Текст') }}
+        {{ macros.input(form.text(class_='form-control', style='height: 150px;', maxlength='1024', required=True), 'Текст') }}
         <input type="submit" value="Отправить">
     </form>
     <span class="pull-right" style="font-size: 10px;"><a href="/feedback">Посмотреть все отзывы</a></span>
