@@ -1,13 +1,32 @@
 {% extends "base.html" %}
 
+{% block head %}
+<style type="text/css">
+    .dollar-ul {
+        list-style: none;
+    }
+    .dollar-ul li {
+        text-indent: -1.5em;
+    }
+    .dollar-ul li:before {
+        content: "$";
+        padding-right: 5px;
+        font-weight: bold;
+    }
+    .date {
+        font-size: 9px;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
     {% if feedback %}
-        <ul style="padding-left: 20px;">
+        <ul class="dollar-ul" style="padding-left: 20px;">
         {% for record in feedback %}
             <li>
-                От: {{ record['from'] }}, {{ record['age'] }} годиков<br>
-                Дата: {{ record['date'] }} UTC<br>
+                [{{ record['from'] }}@{{ record['age'] }} годиков]<br>
                 {{ record['text']|safe }}<br>
+                <span class="date">{{ record['date'] }} UTC</span>
                 <hr>
             </li>
         {% endfor %}

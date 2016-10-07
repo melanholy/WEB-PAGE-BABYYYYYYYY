@@ -1,12 +1,26 @@
 {% extends "base.html" %}
 
 {% block head %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form.css') }}">
-    <style>
-        input[type=submit] {
-            width: 70px;
-        }
-    </style>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form.css') }}">
+<style>
+    input[type=submit] {
+        width: 70px;
+    }
+        .dollar-ul {
+        list-style: none;
+    }
+    .dollar-ul li {
+        text-indent: -1.5em;
+    }
+    .dollar-ul li:before {
+        content: "$";
+        padding-right: 5px;
+        font-weight: bold;
+    }
+    .date {
+        font-size: 9px;
+    }
+</style>
 {% endblock %}
 
 {% block body %}
@@ -18,15 +32,14 @@
     <form action="/stuff">
         <input type="submit" value="Сбросить">
     </form>
-    <ul style="margin-top: 10px; padding-left: 20px;">
+    <ul style="margin-top: 10px; padding-left: 20px;" class="dollar-ul">
     {% for request in requests %}
         <li>
-            {{ request.address }}<br>
-            {{ request.path }}<br>
-            {{ request.time }}<br>
+            [{{ request.address }}@{{ request.path[1:] }}]<br>
             {% if 'ss' in request %}
-                {{ request.ss }}, {{ request.ua }}
+                {{ request.ss }}, {{ request.ua }}<br>
             {% endif %}
+            <span class="date">{{ request.time }}</span>
             <hr>
         </li>
     {% endfor %}

@@ -125,7 +125,7 @@ def leave_feedback():
         mongo.db.feedback.save({
             'from': current_user.username,
             'text': form.text.data,
-            'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+            'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'age': form.age.data
         })
         return redirect('/feedback')
