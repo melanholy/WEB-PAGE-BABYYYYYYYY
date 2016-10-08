@@ -72,7 +72,6 @@ function hideModals() {
     for (var i = 0; i < hids.length; i++)
         hids[i].style.display = 'none';
     document.getElementById('help').style.display = 'none';
-    document.body.style.overflow = 'auto';
 
     window.history.pushState({}, "", '/gallery');
 }
@@ -125,8 +124,6 @@ function toggleBigImage() {
     else
         for (var i = 0; i < hids.length; i++)
             hids[i].style.display = 'block';
-
-    document.body.style.overflow = 'hidden';
 
     var id = window.location.pathname.substring(
         window.location.pathname.lastIndexOf('/') + 1
