@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block head %}
-<script src="{{ url_for('static', filename='gallery.js') }}" defer></script>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='gallery.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form.css') }}">
 {% endblock %}
@@ -49,4 +48,8 @@
     </div>
 {% endfor %}
 <div style="clear: both;"></div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='gallery.js') }}"></script>
 {% endblock %}
