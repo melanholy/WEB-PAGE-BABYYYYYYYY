@@ -39,7 +39,7 @@ function sendComment() {
 
     var text = textarea.value;
     var id = document.getElementsByName('id_')[0].getAttribute('value');
-    var csrf = document.getElementsByName('csrf_token')[0].getAttribute('value');
+    var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     var data = {'id_': id, 'csrf_token': csrf, 'text': text};
 
     textarea.value = '';

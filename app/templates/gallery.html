@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<script type="text/javascript" src="{{ url_for('static', filename='gallery.js') }}"></script>
+<script src="{{ url_for('static', filename='gallery.js') }}" defer></script>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='gallery.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form.css') }}">
 {% endblock %}
@@ -31,7 +31,6 @@
 
         </div>
         <div id="comment-form">
-            {{ form.csrf_token }}
             {{ form.id_() }}
             {% if current_user.is_authenticated %}
                 {{ form.text(required=True, style='resize: none; height: 106px; width: 100%;') }}

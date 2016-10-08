@@ -41,3 +41,8 @@ function addStatsToPage() {
 
     statsDiv.appendChild(statsImg);
 }
+
+var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+registerVisit(csrf);
+
+addStatsToPage();
