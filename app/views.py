@@ -133,7 +133,9 @@ def leave_feedback():
     return render_template('leave_feedback.html', title='Оставить отзыв', form=form)
 
 def unescape_allowed_tags(text):
-    text = IMG_TAG.sub(r'<img src="\1" style="max-width: 360px;">', text)
+    text = IMG_TAG.sub(r'''<div class="col-md-12" style="padding: 0;">
+                               <img src="\1" class="img-responsive">
+                           </div>''', text)
     text = B_TAG.sub(r'<b>\1</b>', text)
     text = BR_TAG.sub(r'<br>', text)
     text = I_TAG.sub(r'<i>\1</i>', text)
