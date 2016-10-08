@@ -1,5 +1,5 @@
 #shade {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 3;
@@ -11,7 +11,7 @@
     cursor: pointer;
 }
 #image-big-div {
-    position: fixed;
+    position: absolute;
     display: none;
     padding: 0px;
 }
@@ -37,7 +37,7 @@
     height: 100%;
 }
 #image-big {
-    margin-left: -3px;
+    margin-left: -4px;
     vertical-align: middle;
     display: inline-block;
     max-height: 100%;
@@ -67,6 +67,10 @@
         content: "";
         height: 133px;
         display: block;
+    }
+    #image-big-div {
+        margin-bottom: 0px;
+        padding-bottom: 20px;
     }
 }
 @media (min-width: 1300px) {
