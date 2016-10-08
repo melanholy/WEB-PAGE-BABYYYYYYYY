@@ -30,11 +30,18 @@ hr {
     margin: 10px 0px;
     border-color: #444;
 }
+h1 {
+    font-weight: 500;
+    font-size: 36px;
+    margin: 20px 0px 10px 0px;
+    line-height: 1.1;
+}
 li {
-    word-break: break-all;
+    word-wrap: break-word;
 }
 .navbar-left {
     padding-left: 5px;
+    margin: 0px 0px 10px 0px;
 }
 .menu-item {
     text-align: center;
@@ -83,6 +90,7 @@ a:hover {
     list-style: none;
     padding-left: 20px;
     text-indent: -17px;
+    margin-top: 0;
 }
 .dollar-ul li:before {
     content: "$";

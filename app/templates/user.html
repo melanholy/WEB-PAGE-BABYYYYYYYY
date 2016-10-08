@@ -61,7 +61,7 @@
         <form method="POST" action="/user">
             {{ form.csrf_token }}
             {{ form.id_(value=record['_id']) }}
-            {{ macros.input(form.text(class_='form-control', maxlength='1024', required=True, data=record['text']), 'Новый текст') }}
+            {{ macros.input(form.text(class_='form-control glow', maxlength='1024', required=True, data=record['text']), 'Новый текст') }}
             <input type="submit" value="Подтвердить">
         </form>
     </div>
