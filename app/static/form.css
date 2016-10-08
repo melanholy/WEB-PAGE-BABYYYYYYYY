@@ -54,6 +54,9 @@ input[type=submit] {
     margin-bottom: 5px;
     cursor: default;
 }
+textarea {
+    resize: vertical;
+}
 button {
     cursor: default;
 }
