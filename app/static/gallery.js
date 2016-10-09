@@ -69,17 +69,17 @@ function showBigImage(id, pushHistory=true) {
     imageBig.setAttribute('src', href);
 
     var next = parseInt(id) + 1;
-    pics_len = document.getElementsByClassName('gal-img').length;
-    next = next % pics_len;
+    pictures = document.getElementsByClassName('gal-img');
+    next = next % pictures.length;
 
     var imgPreload = document.getElementById('img-preload');
     var nextHref = document.getElementById(next).getAttribute('data-big');
-    img_preload.setAttribute('src', next_href);
+    imgPreload.setAttribute('src', nextHref);
 
-    pic_name = href.substring(href.lastIndexOf('/') + 1);
-    document.getElementsByName('id_')[0].setAttribute('value', pic_name);
+    pictureName = href.substring(href.lastIndexOf('/') + 1);
+    document.getElementsByName('id_')[0].setAttribute('value', pictureName);
 
-    getComments(pic_name);
+    getComments(pictureName);
 }
 
 function setAsBackground() {
@@ -121,10 +121,10 @@ document.onkeydown = function(event) {
         else
             return;
 
-        pics_len = document.getElementsByClassName('gal-img').length;
+        pictures = document.getElementsByClassName('gal-img');
         if (next < 0)
-            next = pics_len - 1;
-        next = next % pics_len;
+            next = pictures.length - 1;
+        next = next % pictures.length;
 
         showBigImage(next);
     }
