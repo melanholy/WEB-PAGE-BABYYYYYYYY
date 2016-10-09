@@ -23,7 +23,7 @@
         <button onclick="setAsBackground();" style="position: absolute; top: 0; right: 0; z-index: 1000;">Сделать фоновой</button>
         <div id="for-alignment"></div>
         <img class="img-responsive" alt="loading" id="image-big" src="">
-        <img src="" id="img-preload" style="display: none;" alt="если вы можете это читать, сделайте мне бутерброд">
+        <img src="" id="img-preload" style="display: none;" alt="если вы это читаете, сделайте мне бутерброд">
     </div>
     <div class="col-sm-12 col-xs-12 col-md-4" id="comments-div">
         <div id="comments" class="msb">
@@ -32,7 +32,7 @@
         <div id="comment-form">
             {{ form.id_() }}
             {% if current_user.is_authenticated %}
-                {{ form.text(required=True, style='resize: none; height: 106px; width: 100%;') }}
+                {{ form.text(class_='glow', required=True, style='resize: none; height: 106px; width: 100%;') }}
                 <button onclick="sendComment();" style="height: 20px; width: 100%;">Отправить</button>
             {% else %}
                 <textarea disabled style="resize: none; height: 106px; width: 100%;">Войдите чтобы получить возможность комментировать</textarea>
