@@ -134,11 +134,10 @@ def register():
 def leave_feedback():
     form = FeedbackForm(request.form)
     if request.method == 'POST' and form.validate():
-        date = get_time_str(time.time())
         mongo.db.feedback.save({
             'from': current_user.username,
             'text': form.text.data,
-            'date': date,
+            'date': int(time.time()),
             'age': form.age.data
         })
         return redirect('/feedback')
@@ -146,7 +145,7 @@ def leave_feedback():
     return render_template('leave_feedback.html', title='Оставить отзыв', form=form)
 
 def unescape_allowed_tags(text):
-    text = IMG_TAG.sub(r'''<div class="col-md-12" style="padding: 0;">
+    text = IMG_TAG.sub(r'''<div class="col-md-4" style="padding: 0;">
                                <img src="\1" class="img-responsive">
                            </div>''', text)
     text = B_TAG.sub(r'<b>\1</b>', text)
@@ -159,6 +158,8 @@ def feedback():
     records = [x for x in mongo.db.feedback.find()]
     for record in records:
         record['text'] = unescape_allowed_tags(str(escape(record['text'])))
+        if isinstance(com['date'], int):
+            record['date'] = get_time_str(record['date'])
     return render_template('feedback.html', title='Отзывы', feedback=records)
 
 @app.route('/logout')
