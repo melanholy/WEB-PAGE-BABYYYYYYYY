@@ -19,14 +19,12 @@
         <input type="submit" value="Сбросить">
     </form>
     <ul style="margin-top: 10px; padding-left: 20px;" class="dollar-ul">
-    {% for request in requests %}
+    {% for req in requests %}
         <li>
-            [{{ request.address }}]<br>
-            {{ request.path }}<br>
-            {% if 'ss' in request %}
-                {{ request.ss }}, {{ request.ua }}<br>
-            {% endif %}
-            <span class="date">{{ request.time }}</span>
+            [{{ req.address }}]<br>
+            {{ req.path }}<br>
+            {% if 'ss' in req %}{{ req.ss }}{% endif %}{% if 'ua' in req and 'ss' in req %}, {% endif %}{% if 'ua' in req %}{{ req.ua }}{% endif %}{% if 'ua' in req or 'ss' in req %}<br>{% endif %}
+            <span class="date">{{ req.time }}</span>
             <hr>
         </li>
     {% endfor %}

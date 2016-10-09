@@ -23,22 +23,35 @@ B_TAG = re.compile(r'&lt;b&gt;(.+?)&lt;/b&gt;')
 I_TAG = re.compile(r'&lt;i&gt;(.+?)&lt;/i&gt;')
 IMG_TAG = re.compile(r'&lt;img src=&#34;(.+?)&#34;&gt;')
 BR_TAG = re.compile(r'&lt;br&gt;')
+SS_RE = re.compile(r'^\d{1,5}x\d{1,5}$')
+
+def get_time_str(timestamp):
+    if 'tz' in request.cookies:
+        timezone = int(request.cookies['tz'])
+        return datetime.datetime.fromtimestamp(
+            timestamp - timezone * 60
+        ).strftime('%Y-%m-%d %H:%M:%S')
+    return datetime.datetime.fromtimestamp(
+        timestamp
+    ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
 
 @app.after_request
 def after_request(response):
     response.headers['Server'] = 'supa dupa servah'
+
+    if 'tz' in request.cookies and not request.cookies['tz'].lstrip("-").isdigit() or \
+       'ss' in request.cookies and not SS_RE.match(request.cookies['ss']):
+        return make_response(HACK_DETECTED_MSG)
+
+    if request.path != '/stats' and request.path in [x.rule for x in app.url_map.iter_rules()]:
+        register_request()
+
     return response
 
-@app.route('/visit', methods=['POST'])
-def visit():
-    if 'ss' not in request.form or 'path' not in request.form \
-        or 'ua' not in request.form:
-        return HACK_DETECTED_MSG
-    if not request.form['path'] in [x.rule for x in app.url_map.iter_rules()]:
-        return HACK_DETECTED_MSG
+def register_request():
     if BLOCKED_USERS.get(request.remote_addr) and \
        time.time() - BLOCKED_USERS[request.remote_addr] < 120:
-        return 'ok'
+        return
     if BLOCKED_USERS.get(request.remote_addr):
         del BLOCKED_USERS[request.remote_addr]
 
@@ -48,14 +61,14 @@ def visit():
     }).count()
     if recent_hits_count > 10:
         BLOCKED_USERS[request.remote_addr] = time.time()
-        return 'ok'
+        return
 
     mongo.db.hits.save({
         'time': int(time.time()),
         'address': request.remote_addr,
-        'path': request.form['path'],
-        'ss': request.form['ss'],
-        'ua': request.form['ua']
+        'path': request.path,
+        'ss': request.cookies.get('ss'),
+        'ua': request.user_agent.string
     })
 
     last_record = mongo.db.visits.find_one(
@@ -67,7 +80,6 @@ def visit():
             'address': request.remote_addr,
             'time': int(time.time())
         })
-    return 'ok'
 
 @app.route('/robots.txt')
 def robots():
@@ -84,7 +96,7 @@ def error404(error):
 @app.errorhandler(400)
 @app.errorhandler(403)
 @app.errorhandler(405)
-def error(error):
+def handle_error(error):
     return HACK_DETECTED_MSG, error.code
 
 @app.route('/')
@@ -122,10 +134,11 @@ def register():
 def leave_feedback():
     form = FeedbackForm(request.form)
     if request.method == 'POST' and form.validate():
+        date = get_time_str(time.time())
         mongo.db.feedback.save({
             'from': current_user.username,
             'text': form.text.data,
-            'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'date': date,
             'age': form.age.data
         })
         return redirect('/feedback')
@@ -179,9 +192,7 @@ def stuff():
     else:
         requests = [x for x in mongo.db.hits.find()]
     for req in requests:
-        req['time'] = datetime.datetime.fromtimestamp(
-            req['time']
-        ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
+        req['time'] = get_time_str(req['time'])
     return render_template('stuff.html', title='Штуки', requests=requests)
 
 @app.route('/images/<image>')
@@ -196,21 +207,17 @@ def get_image(image):
 def gallery(img_id=None):
     if img_id and not img_id.isdigit():
         return HACK_DETECTED_MSG
-    min_images = sorted(['/images/' + x for x in os.listdir('app/images') if x.startswith('min')])
-    images = sorted(['/images/' + x for x in os.listdir('app/images') if not x.startswith('min')])
+    min_images = ['/images/' + x for x in os.listdir('app/images') if x.startswith('min')]
+    images = ['/images/' + x for x in os.listdir('app/images') if not x.startswith('min')]
     if img_id and int(img_id) >= len(images):
         return HACK_DETECTED_MSG
     form = EditFeedbackForm()
     return render_template(
         'gallery.html', title='Картиночки',
-        images=images, min_images=min_images, form=form
+        images=sorted(images), min_images=sorted(min_images), form=form
     )
 
-@app.route('/comments')
-def load_comments():
-    if not 'filename' in request.args:
-        return HACK_DETECTED_MSG
-    picture = request.args['filename']
+def get_comments(picture):
     record = mongo.db.comments.find_one({'filename': picture})
 
     if not record:
@@ -220,8 +227,17 @@ def load_comments():
     for com in comments:
         com['text'] = escape(com['text'])
         com['author'] = escape(com['author'])
+        if isinstance(com['date'], int):
+            com['date'] = get_time_str(com['date'])
 
     return json.dumps(comments)
+
+@app.route('/comments')
+def load_comments():
+    if not 'filename' in request.args:
+        return HACK_DETECTED_MSG
+    picture = request.args['filename']
+    return get_comments(picture)
 
 @app.route('/comment', methods=['POST'])
 @login_required
@@ -235,20 +251,17 @@ def comment():
                 return HACK_DETECTED_MSG
             else:
                 mongo.db.comments.save({'filename': form.id_.data, 'comments': []})
-        cur_time = datetime.datetime.fromtimestamp(
-            time.time()
-        ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
         mongo.db.comments.update(
             {'filename': form.id_.data},
             {'$push': {'comments': {
-                'date': cur_time,
+                'date': int(time.time()),
                 'text': form.text.data,
                 'author': current_user.username
             }}}
         )
         if '<img' in form.text.data or '<script' in form.text.data:
             return HACK_DETECTED_MSG
-        return 'ok'
+        return get_comments(form.id_.data)
     return HACK_DETECTED_MSG
 
 def nocache(view):
@@ -269,11 +282,8 @@ def nocache(view):
 @app.route('/stats')
 @nocache
 def stats():
-    if not 'path' in request.args or not 'tz' in request.args:
+    if not 'path' in request.args:
         return HACK_DETECTED_MSG
-    if not request.args['tz'].lstrip("-").isdigit():
-        return HACK_DETECTED_MSG
-    timezone = int(request.args['tz'])
 
     now = datetime.datetime.now()
     beginning_of_day = datetime.datetime.combine(now.date(), datetime.time(0))
@@ -293,9 +303,7 @@ def stats():
         'path': request.args['path']
     }, sort=[('$natural', -1)], limit=2)]
     if len(last_hits) > 1:
-        last_hit = datetime.datetime.fromtimestamp(
-            last_hits[1]['time'] - timezone * 60
-        ).strftime('%Y-%m-%d %H:%M:%S')
+        last_hit = get_time_str(last_hits[1]['time'])
     else:
         last_hit = 'не было'
 
