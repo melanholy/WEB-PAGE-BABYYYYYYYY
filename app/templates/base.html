@@ -8,21 +8,22 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
-    {% if request.cookies.get('back') %}
-        <style type="text/css">
-            body {
-                background-image: url("{{ request.cookies.get('back') }}");
-            }
-        </style>
+    {% if 'back' in request.cookies %}
+    <style type="text/css">
+        body {
+            background-image: url("{{ request.cookies['back'] }}");
+        }
+    </style>
     {% endif %}
+
     {% block head %}
     {% endblock %}
+
 </head>
 <body>
     <nav class="header">
         <div class="container">
-            <div id="stats" style="width: 270px; height: 34px;">
-            </div>
+            <img src="/stats?path={{ request.path }}" width="270" height="34" alt="Статистика посещений" style="margin-bottom: 2px;">
             <ul class="navbar-left">
                 <li class="menu-item"><a href="/index">Обо мне</a></li>
                 <li class="menu-item"><a href="/skills">Навыки</a></li>
@@ -47,9 +48,10 @@
         {% endblock %}
         </div>
     </div>
-    <script src="{{ url_for('static', filename='ajax.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
     {% block scripts %}
     {% endblock %}
+
 </body>
 </html>
