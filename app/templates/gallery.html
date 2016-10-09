@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block body %}
-<div class="hid" id="shade" onclick="hideModals()"></div>
-<img src="{{ url_for('static', filename='cross.png') }}" class="hid" onclick="hideModals()" id="cross" alt="закрыть">
+<div class="hid" id="shade" onclick="hideModals();"></div>
+<img src="{{ url_for('static', filename='cross.png') }}" class="hid" onclick="hideModals();" id="cross" alt="закрыть">
 <div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs msb" id="help">
     Вы находитесь в галерее. Помощь по использованию:<br>
     <ol>
@@ -33,7 +33,7 @@
             {{ form.id_() }}
             {% if current_user.is_authenticated %}
                 {{ form.text(required=True, style='resize: none; height: 106px; width: 100%;') }}
-                <button onclick="sendComment()" style="height: 20px; width: 100%;">Отправить</button>
+                <button onclick="sendComment();" style="height: 20px; width: 100%;">Отправить</button>
             {% else %}
                 <textarea disabled style="resize: none; height: 106px; width: 100%;">Войдите чтобы получить возможность комментировать</textarea>
                 <button disabled style="height: 20px; width: 100%;">Отправить</button>
@@ -44,12 +44,13 @@
 </div>
 {% for i in range(min_images|length ) %}
     <div class="col-md-2 col-sm-3 col-xs-4 col-lg-2 col-el-2 img-wrapper">
-	   <img onclick="expandImage('{{ i }}')" alt="loading" class="img-responsive gal-img" data-big="{{ images[i] }}" src="{{ min_images[i] }}" id="{{ i }}">
+	   <img onclick="showBigImage('{{ i }}');" alt="loading" class="img-responsive gal-img" data-big="{{ images[i] }}" src="{{ min_images[i] }}" id="{{ i }}">
     </div>
 {% endfor %}
 <div style="clear: both;"></div>
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='ajax.js') }}"></script>
 <script src="{{ url_for('static', filename='gallery.js') }}"></script>
 {% endblock %}
