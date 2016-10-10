@@ -24,3 +24,12 @@ function setInfoCookie() {
 }
 
 setInfoCookie();
+
+var audioElement = document.getElementById('music');
+function music() {
+    if (audioElement.paused) {
+        audioElement.play();
+        return;
+    }
+    audioElement.pause();
+}

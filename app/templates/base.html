@@ -41,8 +41,12 @@
     </nav>
     <div class="container">
         <a href="/leave_feedback">
-            <div class="some-button">Оставить отзыв</div>
+            <div class="top-stick feedback">Оставить отзыв</div>
         </a>
+        <div class="top-stick music" onclick="music();">
+            <audio src="{{ url_for('static', filename='music.mp3') }}" id="music"></audio>
+            <img src="{{ url_for('static', filename='music.jpg') }}" alt="Музыка">
+        </div>
         <div class="content">
         {% block body %}
         {% endblock %}
