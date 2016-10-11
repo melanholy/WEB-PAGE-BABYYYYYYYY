@@ -11,7 +11,7 @@ AUTO = object()
 def check_bad_symbols(form, field):
     for char in field.data:
         code = ord(char)
-        if code > 256 and code < 1072 or code > 1105:
+        if code != 1025 and (code > 256 and code < 1040 or code > 1105):
             raise ValidationError('Нельзя использовать особые символы.')
 
 class NoIdAttributeMeta(object):
