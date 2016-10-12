@@ -7,7 +7,8 @@ import json
 from functools import wraps, update_wrapper
 from app import app, mongo
 from app.models import User
-from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm
+from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm, \
+                      CommentForm, DeleteFeedbackForm
 from flask import render_template, send_from_directory, redirect, request, \
                   flash, send_file, make_response
 from flask_login import login_required, login_user, logout_user, current_user
@@ -171,18 +172,28 @@ def logout():
 @app.route('/user', methods=['POST', 'GET'])
 @login_required
 def user_page():
-    form = EditFeedbackForm()
-    if request.method == 'POST' and form.validate():
-        record = mongo.db.feedback.find_one({'_id': ObjectId(form.id_.data)})
+    edit_form = EditFeedbackForm()
+    del_form = DeleteFeedbackForm()
+    if request.method == 'POST' and del_form.validate():
+        record = mongo.db.feedback.find_one({'_id': ObjectId(del_form.id_.data)})
+        if record and record['from'] == current_user.username:
+            mongo.db.feedback.remove({'_id': ObjectId(del_form.id_.data)})
+        else:
+            return HACK_DETECTED_MSG
+    elif request.method == 'POST' and edit_form.validate():
+        record = mongo.db.feedback.find_one({'_id': ObjectId(edit_form.id_.data)})
         if record and record['from'] == current_user.username:
             mongo.db.feedback.update(
-                {'_id': ObjectId(form.id_.data)},
-                {'$set': {'text': form.text.data}}
+                {'_id': ObjectId(edit_form.id_.data)},
+                {'$set': {'text': edit_form.text.data}}
             )
         else:
             return HACK_DETECTED_MSG
     cursor = mongo.db.feedback.find({'from': current_user.username})
-    return render_template('user.html', title='Настройки', feedback=cursor, form=form)
+    return render_template(
+        'user.html', title='Настройки', feedback=cursor,
+        edit_form=edit_form, del_form=del_form
+    )
 
 @app.route('/stuff')
 def stuff():
@@ -212,7 +223,7 @@ def gallery(img_id=None):
     images = ['/images/' + x for x in os.listdir('app/images') if not x.startswith('min')]
     if img_id and int(img_id) >= len(images):
         return HACK_DETECTED_MSG
-    form = EditFeedbackForm()
+    form = CommentForm()
     return render_template(
         'gallery.html', title='Картиночки',
         images=sorted(images), min_images=sorted(min_images), form=form
@@ -243,7 +254,7 @@ def load_comments():
 @app.route('/comment', methods=['POST'])
 @login_required
 def comment():
-    form = EditFeedbackForm()
+    form = CommentForm()
     if form.validate_on_submit():
         if not mongo.db.comments.find_one({'filename': form.id_.data}):
             path = os.path.abspath('app/images/' + form.id_.data)

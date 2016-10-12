@@ -60,12 +60,12 @@ class RegisterForm(Form):
         validators.DataRequired(message=FIELD_REQUIRED_MSG)
     ])
 
-FEEDBACK_TEXTAREA = StringField(
+MY_TEXTAREA = StringField(
     'Text',
     [
         validators.DataRequired(message=FIELD_REQUIRED_MSG),
         check_bad_symbols,
-        validators.Length(min=1, max=1024, message='Максимальная длина отзыва - 1024 символа.')
+        validators.Length(min=1, max=1024, message='Максимальная длина - 1024 символа.')
     ],
     widget=TextArea()
 )
@@ -76,9 +76,18 @@ class FeedbackForm(Form):
         validators.DataRequired(message=FIELD_REQUIRED_MSG),
         validators.NumberRange(min=1, max=999, message='Вы не можете быть старше 999 лет.')
     ])
-    text = FEEDBACK_TEXTAREA
+    text = MY_TEXTAREA
 
 class EditFeedbackForm(Form):
     Meta = NoIdAttributeMeta
     id_ = HiddenField('Id')
-    text = FEEDBACK_TEXTAREA
+    text = MY_TEXTAREA
+
+class CommentForm(Form):
+    Meta = NoIdAttributeMeta
+    id_ = HiddenField('Id')
+    text = MY_TEXTAREA
+
+class DeleteFeedbackForm(Form):
+    Meta = NoIdAttributeMeta
+    id_ = HiddenField('Id')
