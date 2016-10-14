@@ -23,11 +23,11 @@ body {
     cursor: pointer;
     border-left: none;
 }
-.header {
+nav {
     margin-bottom: 10px;
 }
 @media(max-width:788px){
-    .header {
+    nav {
         padding-top: 38px;
     }
 }
@@ -63,10 +63,10 @@ li {
         width: 50%;
     }
 }
-.header ul li a:hover {
+nav ul li a:hover {
     background: #292929;
 }
-.header ul li a {
+nav ul li a {
     display: block;
     padding: 2px 0px;
     border: 1px solid #444;

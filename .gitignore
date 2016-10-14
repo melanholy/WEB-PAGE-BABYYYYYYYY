@@ -144,3 +144,5 @@ db
 *.key
 *.ca-bundle
 *.pem
+*.sublime-project
+*.sublime-workspace

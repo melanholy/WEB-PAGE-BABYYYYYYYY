@@ -21,25 +21,24 @@
 
 </head>
 <body>
-    <nav class="header">
-        <div class="container">
-            <img src="/stats?path={{ request.path }}" width="270" height="34" alt="Статистика посещений" style="margin-bottom: 2px;">
-            <ul class="navbar-left">
-                <li class="menu-item"><a href="/index">Обо мне</a></li>
-                <li class="menu-item"><a href="/skills">Навыки</a></li>
-                <li class="menu-item"><a href="/gallery">Картиночки</a></li>
-                <li class="menu-item"><a href="/stuff">Штуки</a></li>
-                <li class="menu-item"><a href="/contacts">Контакты</a></li>
-                {% if current_user.is_authenticated %}
-                <li class="menu-item"><a href="/user">{{ current_user.username }}</a></li>
-                <li class="menu-item" style="width: 35px;"><a href="/logout">[x]</a></li>
-                {% else %}
-                <li class="menu-item"><a href="/login">Войти</a></li>
-                {% endif %}
-            </ul>
-        </div>
+    <nav class="container">
+        <img src="/stats?path={{ request.path }}" width="270" height="34" alt="Статистика посещений" style="margin-bottom: 2px;">
+        <ul class="navbar-left">
+            <li class="menu-item"><a href="/index">Обо мне</a></li>
+            <li class="menu-item"><a href="/skills">Навыки</a></li>
+            <li class="menu-item"><a href="/gallery">Картиночки</a></li>
+            <li class="menu-item"><a href="/stuff">Штуки</a></li>
+            <li class="menu-item"><a href="/contacts">Контакты</a></li>
+            {% if current_user.is_authenticated %}
+            <li class="menu-item"><a href="/user">{{ current_user.username }}</a></li>
+            <li class="menu-item" style="width: 35px;"><a href="/logout">[x]</a></li>
+            {% else %}
+            <li class="menu-item"><a href="/login">Войти</a></li>
+            {% endif %}
+        </ul>
     </nav>
-    <div class="container">
+
+    <aside>
         <a href="/leave_feedback">
             <div class="top-stick feedback">Оставить отзыв</div>
         </a>
@@ -49,13 +48,16 @@
             </audio>
             <img src="{{ url_for('static', filename='music.jpg') }}" alt="Музыка">
         </div>
+    </aside>
+
+    <main class="container">
         <div class="content">
         {% block body %}
         {% endblock %}
         </div>
-    </div>
-    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    </main>
 
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
     {% block scripts %}
     {% endblock %}
 
