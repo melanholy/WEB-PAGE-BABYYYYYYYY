@@ -4,8 +4,8 @@ import os
 import io
 import re
 import json
+import app
 from functools import wraps, update_wrapper
-from app import app, mongo
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm, \
                       CommentForm, DeleteFeedbackForm
@@ -36,7 +36,7 @@ def get_time_str(timestamp):
         timestamp
     ).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
 
-@app.after_request
+@app.app.after_request
 def after_request(response):
     response.headers['Server'] = 'supa dupa servah'
 
@@ -44,7 +44,7 @@ def after_request(response):
        'ss' in request.cookies and not SS_RE.match(request.cookies['ss']):
         return make_response(HACK_DETECTED_MSG)
 
-    if request.path != '/stats' and request.path in [x.rule for x in app.url_map.iter_rules()]:
+    if request.path != '/stats' and request.path in app.url_map:
         register_request()
 
     return response
@@ -56,7 +56,7 @@ def register_request():
     if BLOCKED_USERS.get(request.remote_addr):
         del BLOCKED_USERS[request.remote_addr]
 
-    recent_hits_count = mongo.db.hits.find({
+    recent_hits_count = app.mongo.db.hits.find({
         'time': {'$gt': time.time() - 10},
         'address': request.remote_addr
     }).count()
@@ -64,7 +64,7 @@ def register_request():
         BLOCKED_USERS[request.remote_addr] = time.time()
         return
 
-    mongo.db.hits.save({
+    app.mongo.db.hits.save({
         'time': int(time.time()),
         'address': request.remote_addr,
         'path': request.path,
@@ -72,54 +72,56 @@ def register_request():
         'ua': request.user_agent.string
     })
 
-    last_record = mongo.db.visits.find_one(
+    last_record = app.mongo.db.visits.find_one(
         {'address': request.remote_addr},
         sort=[('$natural', -1)]
     )
     if not last_record or time.time() - last_record['time'] > 1800:
-        mongo.db.visits.save({
+        app.mongo.db.visits.save({
             'address': request.remote_addr,
             'time': int(time.time())
         })
 
-@app.route('/robots.txt')
+@app.app.route('/robots.txt')
 def robots():
-    return send_from_directory(app.static_folder, 'robots.txt')
+    return send_from_directory(app.app.static_folder, 'robots.txt')
 
-@app.route('/404')
+@app.app.route('/404')
 def not_found():
     return render_template('404.html', title='Четыреста четыре'), 404
 
-@app.errorhandler(404)
+@app.app.errorhandler(404)
 def error404(error):
     return redirect('/404')
 
-@app.errorhandler(400)
-@app.errorhandler(403)
-@app.errorhandler(405)
+@app.app.errorhandler(400)
+@app.app.errorhandler(403)
+@app.app.errorhandler(405)
 def handle_error(error):
     return HACK_DETECTED_MSG, error.code
 
-@app.route('/')
-@app.route('/index')
+@app.app.route('/')
+@app.app.route('/index')
 def index():
     if request.path == '/':
         return redirect('/index')
     return render_template('index.html', title='Обо мне')
 
-@app.route('/login', methods=['POST', 'GET'])
+@app.app.route('/login', methods=['POST', 'GET'])
 def login():
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
         user = User(form.username.data)
         if user.validate(form.password.data):
             login_user(user)
-            return request.args.get('next') or redirect('/')
+            if 'next' in request.args and request.args['next'] in app.url_map:
+                return redirect(request.args['next'])
+            return redirect('/')
         flash('Неверный логин или пароль.')
 
     return render_template('login.html', title='Вход', form=form)
 
-@app.route('/register', methods=['POST', 'GET'])
+@app.app.route('/register', methods=['POST', 'GET'])
 def register():
     form = RegisterForm(request.form)
     if request.method == 'POST' and form.validate():
@@ -130,12 +132,12 @@ def register():
 
     return render_template('register.html', title='Регистрация', form=form)
 
-@app.route('/leave_feedback', methods=['POST', 'GET'])
+@app.app.route('/leave_feedback', methods=['POST', 'GET'])
 @login_required
 def leave_feedback():
     form = FeedbackForm(request.form)
     if request.method == 'POST' and form.validate():
-        mongo.db.feedback.save({
+        app.mongo.db.feedback.save({
             'from': current_user.username,
             'text': form.text.data,
             'date': int(time.time()),
@@ -154,68 +156,68 @@ def unescape_allowed_tags(text):
     text = I_TAG.sub(r'<i>\1</i>', text)
     return text
 
-@app.route('/feedback')
+@app.app.route('/feedback')
 def feedback():
-    records = [x for x in mongo.db.feedback.find()]
+    records = [x for x in app.mongo.db.feedback.find()]
     for record in records:
         record['text'] = unescape_allowed_tags(str(escape(record['text'])))
         if 'date' in record and isinstance(record['date'], int):
             record['date'] = get_time_str(record['date'])
     return render_template('feedback.html', title='Отзывы', feedback=records)
 
-@app.route('/logout')
+@app.app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect('/')
 
-@app.route('/user', methods=['POST', 'GET'])
+@app.app.route('/user', methods=['POST', 'GET'])
 @login_required
 def user_page():
     edit_form = EditFeedbackForm()
     del_form = DeleteFeedbackForm()
     if request.method == 'POST' and del_form.validate():
-        record = mongo.db.feedback.find_one({'_id': ObjectId(del_form.id_.data)})
+        record = app.mongo.db.feedback.find_one({'_id': ObjectId(del_form.id_.data)})
         if record and record['from'] == current_user.username:
-            mongo.db.feedback.remove({'_id': ObjectId(del_form.id_.data)})
+            app.mongo.db.feedback.remove({'_id': ObjectId(del_form.id_.data)})
         else:
             return HACK_DETECTED_MSG
     elif request.method == 'POST' and edit_form.validate():
-        record = mongo.db.feedback.find_one({'_id': ObjectId(edit_form.id_.data)})
+        record = app.mongo.db.feedback.find_one({'_id': ObjectId(edit_form.id_.data)})
         if record and record['from'] == current_user.username:
-            mongo.db.feedback.update(
+            app.mongo.db.feedback.update(
                 {'_id': ObjectId(edit_form.id_.data)},
                 {'$set': {'text': edit_form.text.data}}
             )
         else:
             return HACK_DETECTED_MSG
-    cursor = mongo.db.feedback.find({'from': current_user.username})
+    cursor = app.mongo.db.feedback.find({'from': current_user.username})
     return render_template(
         'user.html', title='Настройки', feedback=cursor,
         edit_form=edit_form, del_form=del_form
     )
 
-@app.route('/stuff')
+@app.app.route('/stuff')
 def stuff():
     if 'filter' in request.args:
         if not IP_RE.match(request.args['filter']):
             return HACK_DETECTED_MSG
-        requests = [x for x in mongo.db.hits.find({'address': request.args['filter']})]
+        requests = [x for x in app.mongo.db.hits.find({'address': request.args['filter']})]
     else:
-        requests = [x for x in mongo.db.hits.find()]
+        requests = [x for x in app.mongo.db.hits.find()]
     for req in requests:
         req['time'] = get_time_str(req['time'])
     return render_template('stuff.html', title='Штуки', requests=requests)
 
-@app.route('/images/<image>')
+@app.app.route('/images/<image>')
 def get_image(image):
     path = os.path.abspath('app/images/' + image)
     if not os.path.isfile(path) or (not path.endswith('.png') and not path.endswith('.jpg')):
         return HACK_DETECTED_MSG
     return send_file(path, mimetype='image/jpeg')
 
-@app.route('/gallery/<img_id>')
-@app.route('/gallery')
+@app.app.route('/gallery/<img_id>')
+@app.app.route('/gallery')
 def gallery(img_id=None):
     if img_id and not img_id.isdigit():
         return HACK_DETECTED_MSG
@@ -230,7 +232,7 @@ def gallery(img_id=None):
     )
 
 def get_comments(picture):
-    record = mongo.db.comments.find_one({'filename': picture})
+    record = app.mongo.db.comments.find_one({'filename': picture})
 
     if not record:
         return '[]'
@@ -244,26 +246,26 @@ def get_comments(picture):
 
     return json.dumps(comments)
 
-@app.route('/comments')
+@app.app.route('/comments')
 def load_comments():
     if not 'filename' in request.args:
         return HACK_DETECTED_MSG
     picture = request.args['filename']
     return get_comments(picture)
 
-@app.route('/comment', methods=['POST'])
+@app.app.route('/comment', methods=['POST'])
 @login_required
 def comment():
     form = CommentForm()
     if form.validate_on_submit():
-        if not mongo.db.comments.find_one({'filename': form.id_.data}):
+        if not app.mongo.db.comments.find_one({'filename': form.id_.data}):
             path = os.path.abspath('app/images/' + form.id_.data)
             if not os.path.isfile(path) or (not path.endswith('.png') and \
                not path.endswith('.jpg')):
                 return HACK_DETECTED_MSG
             else:
-                mongo.db.comments.save({'filename': form.id_.data, 'comments': []})
-        mongo.db.comments.update(
+                app.mongo.db.comments.save({'filename': form.id_.data, 'comments': []})
+        app.mongo.db.comments.update(
             {'filename': form.id_.data},
             {'$push': {'comments': {
                 'date': int(time.time()),
@@ -291,7 +293,7 @@ def nocache(view):
 
     return update_wrapper(no_cache, view)
 
-@app.route('/stats')
+@app.app.route('/stats')
 @nocache
 def stats():
     if not 'path' in request.args:
@@ -301,16 +303,16 @@ def stats():
     beginning_of_day = datetime.datetime.combine(now.date(), datetime.time(0))
     passed_today = (now - beginning_of_day).seconds
 
-    visits_today = str(mongo.db.visits.find({
+    visits_today = str(app.mongo.db.visits.find({
         'time': {'$gt': time.time() - passed_today}
     }).count())
-    visits_total = str(mongo.db.visits.find().count())
+    visits_total = str(app.mongo.db.visits.find().count())
 
-    hits_today = str(mongo.db.hits.find({
+    hits_today = str(app.mongo.db.hits.find({
         'time': {'$gt': time.time() - passed_today}
     }).count())
-    hits_total = str(mongo.db.hits.find().count())
-    last_hits = [x for x in mongo.db.hits.find({
+    hits_total = str(app.mongo.db.hits.find().count())
+    last_hits = [x for x in app.mongo.db.hits.find({
         'address': request.remote_addr,
         'path': request.args['path']
     }, sort=[('$natural', -1)], limit=2)]
@@ -349,6 +351,6 @@ def stats():
     data.seek(0)
     return send_file(data, mimetype='image/png')
 
-@app.route('/contacts')
+@app.app.route('/contacts')
 def contacts():
     return render_template('contacts.html', title='Контакты')

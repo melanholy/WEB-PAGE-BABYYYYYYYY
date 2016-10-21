@@ -21,3 +21,5 @@ def load_user(user_id):
     return User.get_by_id(user_id)
 
 from app import views
+
+url_map = [x.rule for x in app.url_map.iter_rules()]

@@ -18,9 +18,9 @@ function addCommentsToDocument(xhr) {
     comment_section.appendChild(list);
     for (var i = 0; i < data.length; i++) {
         var comment = document.createElement('li');
-        comment.innerHTML = '[' + data[i]['author'] + ']<br>' + \
-                            data[i]['text'] + '<br>' + \
-                            '<span class="date">' + data[i]['date'] + '</span>' + \
+        comment.innerHTML = '[' + data[i]['author'] + ']<br>' +
+                            data[i]['text'] + '<br>' +
+                            '<span class="date">' + data[i]['date'] + '</span>' +
                             '<hr>';
         list.appendChild(comment);
     }

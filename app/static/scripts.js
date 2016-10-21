@@ -25,11 +25,10 @@ function setInfoCookie() {
 
 setInfoCookie();
 
-var audioElement = document.getElementById('music');
 function music() {
-    if (audioElement.paused) {
-        audioElement.play();
+    if (player.paused) {
+        player.play();
         return;
     }
-    audioElement.pause();
+    player.pause();
 }
