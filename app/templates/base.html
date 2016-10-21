@@ -40,9 +40,9 @@
 
     <aside>
         <a href="/leave_feedback">
-            <div class="top-stick feedback">Оставить отзыв</div>
+            <div class="top-stick" id="feedback">Оставить отзыв</div>
         </a>
-        <div class="top-stick music" onclick="music();">
+        <div class="top-stick" id="music" onclick="music();">
             <audio id="music">
                 <source src="{{ url_for('static', filename='music.mp3') }}" type="audio/mpeg">
             </audio>

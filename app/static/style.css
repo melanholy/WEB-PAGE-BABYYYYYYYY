@@ -11,13 +11,13 @@ body {
     background: #333;
     border: 1px solid #444;
 }
-.feedback {
+#feedback {
     padding: 5px 10px;
     font-size: 9px;
     border-right: none;
     right: 0px;
 }
-.music {
+#music {
     left: 0px;
     padding: 0px 5px;
     cursor: pointer;
@@ -41,7 +41,6 @@ hr {
 h1 {
     font-weight: 500;
     font-size: 36px;
-    margin: 20px 0px 10px 0px;
     line-height: 1.1;
 }
 li {

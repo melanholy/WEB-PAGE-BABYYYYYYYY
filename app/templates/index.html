@@ -1,5 +1,51 @@
 {% extends "base.html" %}
 
+{% block head %}
+<style type="text/css">
+    h1 {
+        margin: 0px 0px 5px 0px;
+    }
+    figure img {
+         transition: transform 0.5s;
+         -webkit-transition: transform 0.5s;
+        -moz-transition: transform 0.5s;
+        -ms-transition: transform 0.5s;
+        -o-transition: transform 0.5s;
+    }
+    figure img:hover {
+        transform: scale(2.8) translate(5.5%, 32%);
+    }
+    #wrapper {
+        overflow: hidden;
+    }
+    figure {
+        border: 1px solid #444;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    figcaption {
+        text-align: center;
+        border-top: 1px solid #444;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
-Добро пожаловать, ёпта!
+<h1>Всем здрасьте</h1>
+<figure class="col-sm-4" style="padding: 0;">
+    <div id="wrapper">
+        <img src="{{ url_for('static', filename='portrait.jpg') }}" alt="Автопортрет" class="img-responsive">
+    </div>
+    <figcaption>Точный автопортрет</figcaption>
+</figure>
+Меня зовут Кошара Павел Сергеевич. Я учусь в <a href="http://urfu.ru" target="_blank" class="has-icon" data-icon="{{ url_for('static', filename='urfuicon.png') }}">УрФУ</a> на факультете <a href="http://imkn.urfu.ru/" target="_blank">ИМКН</a>, дотянул уже до третьего курса.<br>
+<br>
+Я живу хорошо, просто замечательно. У меня все есть, есть свой дом - он теплый.<br>
+В нем одна комната и кухня.<br>
+<br>
+А здоровье мое не очень: то лапы ломит, то хвост отваливается.<br>
+<br>
+А на днях я линять начал. Старая шерсть с меня сыплется, хоть в дом не заходи... Зато новая растет - чистая-шелковистая.<br>Так что лохматость у меня повысилась.<br>
+<div style="clear: both;">
+<span class="pull-right">До свидания, ваш друг - дядя Шарик.</span>
 {% endblock %}
