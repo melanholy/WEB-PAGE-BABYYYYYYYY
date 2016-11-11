@@ -21,22 +21,23 @@
 
 </head>
 <body>
-    <nav class="container">
+
+    <header class="container">
         <img src="/stats?path={{ request.path }}" width="270" height="34" alt="Статистика посещений" style="margin-bottom: 2px;">
-        <ul class="navbar-left">
-            <li class="menu-item"><a href="/index">Обо мне</a></li>
-            <li class="menu-item"><a href="/skills">Навыки</a></li>
-            <li class="menu-item"><a href="/gallery">Картиночки</a></li>
-            <li class="menu-item"><a href="/stuff">Штуки</a></li>
-            <li class="menu-item"><a href="/contacts">Контакты</a></li>
+        <ul>
+            <li><a href="/index">Обо мне</a></li><!--
+         --><li><a href="/skills">Навыки</a></li><!--
+         --><li><a href="/gallery">Картиночки</a></li><!--
+         --><li><a href="/stuff">Штуки</a></li><!--
+         --><li><a href="/contacts">Контакты</a></li><!--
             {% if current_user.is_authenticated %}
-            <li class="menu-item"><a href="/user">{{ current_user.username }}</a></li>
-            <li class="menu-item" style="width: 35px;"><a href="/logout">[x]</a></li>
+         --><li><a href="/user">{{ current_user.username }}</a></li><!--
+         --><li style="width: 35px;"><a href="/logout">[x]</a></li>
             {% else %}
-            <li class="menu-item"><a href="/login">Войти</a></li>
+         --><li><a href="/login">Войти</a></li>
             {% endif %}
         </ul>
-    </nav>
+    </header>
 
     <aside>
         <a href="/leave_feedback">

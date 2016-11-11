@@ -151,9 +151,9 @@ def unescape_allowed_tags(text):
     text = IMG_TAG.sub(r'''<div class="col-sm-6 col-md-4" style="float: none; padding: 0;">
                                <img src="\1" class="img-responsive">
                            </div>''', text)
-    text = B_TAG.sub(r'<b>\1</b>', text)
+    text = B_TAG.sub(r'<strong>\1</strong>', text)
     text = BR_TAG.sub(r'<br>', text)
-    text = I_TAG.sub(r'<i>\1</i>', text)
+    text = I_TAG.sub(r'<em>\1</em>', text)
     return text
 
 @app.app.route('/feedback')

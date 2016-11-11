@@ -7,9 +7,15 @@
             display: inline;
             margin-top: 5px;
         }
+
         .contact-wrapper {
             text-align: center;
         }
+
+        .contact-wrapper span {
+            padding-bottom: 10px;
+        }
+
         @media (max-width: 767px) {
             .contact-wrapper {
                 margin-bottom: 20px;
@@ -21,21 +27,20 @@
 {% block body %}
 <div class="col-sm-4 contact-wrapper">
     <a href="https://vk.com/4d5354353" target="_blank">
-        <span style="padding-bottom: 10px;">Написать телеграмму</span><br>
+        <span>Написать телеграмму</span><br>
         <img class="img-responsive contact-img" src="{{ url_for('static', filename='telegraph.png') }}" alt="Телеграф">
     </a>
 </div>
 <div class="col-sm-4 contact-wrapper">
     <a href="mailto:irrygan@gmail.com">
-        <span style="padding-bottom: 10px;">Отправить голубя</span><br>
+        <span>Отправить голубя</span><br>
         <img class="img-responsive contact-img" src="{{ url_for('static', filename='pigeon.png') }}" alt="Голубь">
     </a>
 </div>
 <div class="col-sm-4 contact-wrapper">
     <a href="https://github.com/melanholy" target="_blank">
-        <span style="padding-bottom: 10px;">Профиль GitHub</span><br>
+        <span>Профиль GitHub</span><br>
         <img class="img-responsive contact-img" src="{{ url_for('static', filename='sir_octocat.png') }}" alt="Октокот">
     </a>
 </div>
-<div style="clear: both;"></div>
 {% endblock %}

@@ -16,7 +16,8 @@
         {{ macros.input(form.text(class_='form-control glow', style='height: 150px;', maxlength='1024', required=True), 'Текст') }}
         <input type="submit" value="Отправить">
     </form>
-    <span class="pull-right" style="font-size: 10px;"><a href="/feedback">Посмотреть все отзывы</a></span>
+    <a href="/feedback" class="pull-right" style="font-size: 10px;">
+        Посмотреть все отзывы
+    </a>
 </div>
-<div style="clear: both;"></div>
 {% endblock %}

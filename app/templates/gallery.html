@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block body %}
-<div class="hid" id="shade" onclick="hideModals();"></div>
-<img src="{{ url_for('static', filename='cross.png') }}" class="hid" onclick="hideModals();" id="cross" alt="закрыть">
+<div id="shade" onclick="hideModals();"></div>
+<img src="{{ url_for('static', filename='cross.png') }}" onclick="hideModals();" id="cross" alt="закрыть">
 <div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs msb" id="help">
     Вы находитесь в галерее. Помощь по использованию:<br>
     <ol>
@@ -17,27 +17,29 @@
         <li>F1 - открыть/закрыть окно помощи.</li>
     </ol>
 </div>
-<div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs hid" id="image-big-div">
+<div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs" id="image-big-div">
     <div style="height: 100%; overflow: auto;" class="msb" id="scroll-wrapper">
-    <div class="col-sm-12 col-xs-12 col-md-8" id="big-img-wrapper">
-        <button onclick="setAsBackground();" style="position: absolute; top: 0; right: 0; z-index: 1000;">Сделать фоновой</button>
-        <div id="for-alignment"></div>
-    </div>
-    <div class="col-sm-12 col-xs-12 col-md-4" id="comments-div">
-        <div id="comments" class="msb">
+        <div class="col-sm-12 col-xs-12 col-md-8" id="big-img-wrapper">
+            <button onclick="setAsBackground();">Сделать фоновой</button>
+            <div id="for-alignment"></div>
+            <img id="image-big" src="#" alt="Большое изображение">
+            <img id="img-preload" style="display: none;" alt="если вы это читаете, сделайте мне бутерброд" src="#">
+        </div>
+        <div class="col-sm-12 col-xs-12 col-md-4" id="comments-div">
+            <div id="comments" class="msb">
 
+            </div>
+            <div id="comment-form">
+                {{ form.id_() }}
+                {% if current_user.is_authenticated %}
+                    {{ form.text(class_='glow', required=True, style='resize: none; height: 106px; width: 100%;') }}
+                    <button onclick="sendComment();" style="height: 20px; width: 100%;">Отправить</button>
+                {% else %}
+                    <textarea disabled style="resize: none; height: 106px; width: 100%;">Войдите чтобы получить возможность комментировать</textarea>
+                    <button disabled style="height: 20px; width: 100%;">Отправить</button>
+                {% endif %}
+            </div>
         </div>
-        <div id="comment-form">
-            {{ form.id_() }}
-            {% if current_user.is_authenticated %}
-                {{ form.text(class_='glow', required=True, style='resize: none; height: 106px; width: 100%;') }}
-                <button onclick="sendComment();" style="height: 20px; width: 100%;">Отправить</button>
-            {% else %}
-                <textarea disabled style="resize: none; height: 106px; width: 100%;">Войдите чтобы получить возможность комментировать</textarea>
-                <button disabled style="height: 20px; width: 100%;">Отправить</button>
-            {% endif %}
-        </div>
-    </div>
     </div>
 </div>
 {% for i in range(min_images|length ) %}
@@ -45,7 +47,6 @@
 	   <img onclick="showBigImage('{{ i }}');" alt="loading" class="img-responsive gal-img" data-big="{{ images[i] }}" src="{{ min_images[i] }}" id="{{ i }}">
     </div>
 {% endfor %}
-<div style="clear: both;"></div>
 {% endblock %}
 
 {% block scripts %}

@@ -1,12 +1,26 @@
-if (!window.history.pushState) {
-    window.history.pushState = function(one, two, url) {
-        window.location.pathname = url;
+if (!history.pushState) {
+    history.pushState = function(one, two, url) {
+        var target = url.substring(url.lastIndexOf('/') + 1);
+        location.hash = '#' + target;
     }
 }
+
 if (!document.getElementsByClassName) {
     document.getElementsByClassName = function(name) {
         return document.querySelectorAll('.' + name);
     }
+}
+
+if (!Event.prototype.keyCode) {
+    Event.prototype.keyCode = function () {
+        return this.which;
+    };
+}
+
+if (!Event.prototype.preventDefault) {
+    Event.prototype.preventDefault = function () {
+        this.returnValue = false;
+    };
 }
 
 function addCommentsToDocument(xhr) {
@@ -55,62 +69,30 @@ function sendComment() {
     );
 }
 
-function createImageBig() {
-    var imageBig = document.createElement('img');
-    imageBig.id = 'image-big';
-    imageBig.class = 'img-responsive';
-    imageBig.alt = 'Большое изображение';
-    imageBig.style.cssText = 'margin-left: -4px; \
-                              vertical-align: middle; \
-                              display: inline-block; \
-                              max-height: 100%; max-width: 100%;\
-                              background-image: url(/static/spinner.gif); \
-                              background-repeat: no-repeat; \
-                              background-position: center;';
-    return imageBig;
-}
-
-function createImgPreload() {
-    var imagePreload = document.createElement('img');
-    imagePreload.style.display = 'none';
-    imagePreload.alt = 'если вы это читаете, сделайте мне бутерброд';
-    imagePreload.id = 'img-preload';
-
-    return imagePreload;
-}
-
 function setPreload(current) {
     var next = parseInt(current) + 1;
     pictures = document.getElementsByClassName('gal-img');
     next = next % pictures.length;
 
     var imagePreload = document.getElementById('img-preload');
-    if (imagePreload === null) {
-        imagePreload = createImgPreload();
-        var wrapper = document.getElementById('big-img-wrapper');
-        wrapper.appendChild(imagePreload);
-    }
     var nextHref = document.getElementById(next).getAttribute('data-big');
     imagePreload.setAttribute('src', nextHref);
 }
 
-function showBigImage(id, pushHistory=true) {
-    document.getElementById('shade').style.display = 'block';
-    document.getElementById('cross').style.display = 'block';
-    var imageDiv = document.getElementById('image-big-div');
-    imageDiv.style.display = 'block';
+function getPictureName() {
+
+}
+
+function showBigImage(id, pushHistory) {
+    pushHistory = pushHistory || true;
+    shade.style.display = 'block';
+    cross.style.display = 'block';
+    document.getElementById('image-big-div').style.display = 'block';
     if (pushHistory) {
-        window.history.pushState({}, '', '/gallery/' + id);
+        history.pushState({}, '', '/gallery/' + id);
     }
 
     var imageBig = document.getElementById('image-big');
-    var wrapper = document.getElementById('big-img-wrapper');
-    if (imageBig !== null) {
-        wrapper.removeChild(imageBig);
-    }
-    imageBig = createImageBig();
-    wrapper.appendChild(imageBig);
-
     var href = document.getElementById(id).getAttribute('data-big');
     imageBig.setAttribute('data-id', id);
     imageBig.setAttribute('src', href);
@@ -129,25 +111,28 @@ function setAsBackground() {
     document.cookie = 'back='+href+'; expires=0; path=/';
 }
 
-function hideModals(pushHistory=true) {
+function hideModals(pushHistory) {
+    pushHistory = pushHistory || true;
     document.getElementById('image-big-div').style.display = 'none';
-    document.getElementById('cross').style.display = 'none';
-    document.getElementById('shade').style.display = 'none';
-    document.getElementById('help').style.display = 'none';
+    cross.style.display = 'none';
+    shade.style.display = 'none';
+    help.style.display = 'none';
 
     if (pushHistory) {
-        window.history.pushState({}, '', '/gallery');
+        history.pushState({}, '', '/gallery');
     }
 }
 
 function showHelp() {
-    document.getElementById('shade').style.display = 'block';
-    document.getElementById('cross').style.display = 'block';
-    document.getElementById('help').style.display = 'block';
+    shade.style.display = 'block';
+    cross.style.display = 'block';
+    help.style.display = 'block';
 }
 
-document.onkeydown = function(event) {
-    if (event.keyCode == 27) {
+document.onkeydown = function(e) {
+    e = e || event
+    var key = e.keyCode;
+    if (key == 27) {
         hideModals();
         return;
     }
@@ -155,9 +140,9 @@ document.onkeydown = function(event) {
     if (el.style.display != 'none' && el.style.display != '') {
         var imageBig = document.getElementById('image-big');
         var next = parseInt(imageBig.getAttribute('data-id'));
-        if (event.keyCode == 39)
+        if (key == 39)
             next++;
-        else if (event.keyCode == 37)
+        else if (key == 37)
             next--;
         else
             return;
@@ -170,42 +155,38 @@ document.onkeydown = function(event) {
         showBigImage(next);
     }
 
-    if (event.keyCode == 112) {
-        event.preventDefault();
+    if (key == 112) {
         showHelp();
+        e.preventDefault();
     }
 }
 
-function addEvent(event, func) {
-    if (window.addEventListener) {
-        window.addEventListener(event, func);
+function addEvent(e, func) {
+    if (addEventListener) {
+        addEventListener(e, func);
     }
     else {
-        window.attachEvent('on' + event, func);
+        attachEvent('on' + e, func);
     }
 }
 
-addEvent('popstate', function(event) {
-    if (window.location.pathname == '/gallery' ||
-        window.location.pathname == '/gallery/') {
+function getPicId() {
+    if (location.hash) {
+        return location.hash;
+    }
+
+    return location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+}
+
+function changeState() {
+    if (location.pathname == '/gallery') {
         hideModals(false);
         return;
     }
 
-    var id = window.location.pathname.substring(
-        window.location.pathname.lastIndexOf('/') + 1
-    );
+    var id = getPicId();
     showBigImage(id, false);
-});
+}
 
-addEvent('load', function(event){
-    if (window.location.pathname == '/gallery' ||
-        window.location.pathname == '/gallery/') {
-        return;
-    }
-
-    var id = window.location.pathname.substring(
-        window.location.pathname.lastIndexOf('/') + 1
-    );
-    showBigImage(id, false);
-});
+addEvent('popstate', changeState);
+addEvent('load', changeState);

@@ -5,24 +5,24 @@
     h1 {
         margin: 0px 0px 5px 0px;
     }
+
     figure img {
-         transition: transform 0.5s;
-         -webkit-transition: transform 0.5s;
+        -webkit-transition: transform 0.5s;
         -moz-transition: transform 0.5s;
         -ms-transition: transform 0.5s;
         -o-transition: transform 0.5s;
+        transition: transform 0.5s;
     }
+
     figure img:hover {
         transform: scale(2.8) translate(5.5%, 32%);
     }
-    #wrapper {
-        overflow: hidden;
-    }
+
     figure {
         border: 1px solid #444;
-        margin-right: 5px;
-        margin-bottom: 5px;
+        margin: 0 5px 5px 0;
     }
+
     figcaption {
         text-align: center;
         border-top: 1px solid #444;
@@ -33,7 +33,7 @@
 {% block body %}
 <h1>Всем здрасьте</h1>
 <figure class="col-sm-4" style="padding: 0;">
-    <div id="wrapper">
+    <div style="overflow: hidden;">
         <img src="{{ url_for('static', filename='portrait.jpg') }}" alt="Автопортрет" class="img-responsive">
     </div>
     <figcaption>Точный автопортрет</figcaption>
@@ -53,6 +53,7 @@
     А на днях я линять начал. Старая шерсть с меня сыплется, хоть в дом не заходи... Зато новая растет - чистая-шелковистая.<br>
     Так что лохматость у меня повысилась.
 </p>
-<div style="clear: both;"></div>
-<span class="pull-right">До свидания, ваш друг - дядя Шарик.</span>
+<span class="pull-right" style="clear: both;">
+    До свидания, ваш друг - дядя Шарик.
+</span>
 {% endblock %}
