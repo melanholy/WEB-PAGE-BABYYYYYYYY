@@ -5,107 +5,133 @@ body {
     background: #222; /* для ослика */
     background: linear-gradient(to bottom, #222, #282828) fixed;
 }
+
 .top-stick {
     position: absolute;
     top: 10px;
     background: #333;
     border: 1px solid #444;
 }
+
 #feedback {
     padding: 5px 10px;
     font-size: 9px;
     border-right: none;
-    right: 0px;
+    right: 0;
 }
+
 #music {
-    left: 0px;
-    padding: 0px 5px;
+    left: 0;
+    padding: 0 5px;
     cursor: pointer;
     border-left: none;
 }
-nav {
-    margin-bottom: 10px;
-}
-@media(max-width:788px){
-    nav {
-        padding-top: 38px;
-    }
-}
+
 #stats {
-    margin: 2px 0px 3px 0px;
+    margin: 2px 0 3px 0;
 }
+
 hr {
-    margin: 10px 0px;
+    margin: 10px 0;
     border-color: #444;
 }
+
 h1 {
     font-weight: 500;
     font-size: 36px;
     line-height: 1.1;
 }
-li {
-    word-wrap: break-word;
+
+header {
+    margin-bottom: 10px;
 }
-.navbar-left {
-    padding-left: 5px;
-    margin: 0px 0px 10px 0px;
+
+@media(max-width:788px){
+    header {
+        margin-top: 18px;
+    }
 }
-.menu-item {
+
+header ul {
+    padding-left: 0;
+    margin: 0 0 10px 0;
+}
+
+header li {
     text-align: center;
     display: inline-block;
-    margin-left: -5px;
+    margin: 0px -1px -1px 0px;
     width: 128px;
     background: #222;
+    border: 1px solid #444;
+    word-wrap: break-word;
 }
+
 @media(max-width: 411px) {
-    .menu-item {
+    header li {
         width: 50%;
     }
 }
-nav ul li a:hover {
+
+header li:hover {
     background: #292929;
 }
-nav ul li a {
+
+header a {
     display: block;
-    padding: 2px 0px;
-    border: 1px solid #444;
+    padding: 2px 0;
 }
+
 .content {
     background: #232323;
     border: 1px solid #444;
-    padding: 15px 10px 20px 10px;
+    padding: 15px 10px;
     margin-bottom: 10px;
 }
+
+.content:after {
+    display: block;
+    clear: both;
+    content: '';
+}
+
 @media(max-width:544px) {
     .content {
         padding: 7px 5px 10px 5px;
     }
 }
+
 a:focus {
     color: #999;
     text-decoration: none;
 }
+
 a {
     color: #999;
     font-weight: bold;
 }
+
 a:hover {
     color: yellowgreen;
     text-decoration: none;
 }
+
 .dollar-ul {
     list-style: none;
     padding-left: 20px;
-    text-indent: -17px;
     margin-top: 0;
 }
+
 .dollar-ul li:before {
     content: "$";
-    width: 17px;
+    width: 0;
     display: block;
+    position: relative;
     float: left;
+    right: 17px;
     font-weight: bold;
 }
+
 .date {
     font-size: 9px;
 }
