@@ -101,10 +101,7 @@ def handle_error(error):
     return HACK_DETECTED_MSG, error.code
 
 @app.app.route('/')
-@app.app.route('/index')
 def index():
-    if request.path == '/':
-        return redirect('/index')
     return render_template('index.html', title='Обо мне')
 
 @app.app.route('/login', methods=['POST', 'GET'])
@@ -221,6 +218,7 @@ def get_image(image):
 def gallery(img_id=None):
     if img_id and not img_id.isdigit():
         return HACK_DETECTED_MSG
+
     min_images = ['/images/' + x for x in os.listdir('app/images') if x.startswith('min')]
     images = ['/images/' + x for x in os.listdir('app/images') if not x.startswith('min')]
     if img_id and int(img_id) >= len(images):
@@ -233,7 +231,6 @@ def gallery(img_id=None):
 
 def get_comments(picture):
     record = app.mongo.db.comments.find_one({'filename': picture})
-
     if not record:
         return '[]'
 
@@ -293,12 +290,7 @@ def nocache(view):
 
     return update_wrapper(no_cache, view)
 
-@app.app.route('/stats')
-@nocache
-def stats():
-    if not 'path' in request.args:
-        return HACK_DETECTED_MSG
-
+def get_visit_info_str():
     now = datetime.datetime.now()
     beginning_of_day = datetime.datetime.combine(now.date(), datetime.time(0))
     passed_today = (now - beginning_of_day).seconds
@@ -331,15 +323,21 @@ def stats():
     )
     last_hit = 'Последнее посещение страницы: {}'.format(last_hit)
 
-    width = 270
-    height = 34
+    return visits, hits, last_hit
+
+@app.app.route('/stats')
+@nocache
+def stats():
+    if not 'path' in request.args:
+        return HACK_DETECTED_MSG
+
     if request.remote_addr not in BLOCKED_USERS:
-        text = '\n'.join([visits, hits, last_hit])
+        text = '\n'.join(get_visit_info_str())
     else:
         text = 'ДОНАКРУЧИВАЛСЯ'
 
     data = io.BytesIO()
-    with Image(width=width, height=height) as img:
+    with Image(width=270, height=34) as img:
         with Drawing() as draw:
             draw.font_size = 10
             draw.fill_color = Color('rgb(220, 220, 220)')
