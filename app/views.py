@@ -314,11 +314,11 @@ def get_visit_info_str():
         last_hit = 'не было'
 
     visits = 'Всего посещений:  {} | Сегодня: {}'.format(
-        visits_total + ' '*(5 - len(visits_total)),
+        visits_total + ' '*(4 - len(visits_total)),
         visits_today
     )
     hits = 'Всего просмотров: {} | Сегодня: {}'.format(
-        hits_total + ' '*(5 - len(hits_total)),
+        hits_total + ' '*(4 - len(hits_total)),
         hits_today
     )
     last_hit = 'Последнее посещение страницы: {}'.format(last_hit)
@@ -337,9 +337,10 @@ def stats():
         text = 'ДОНАКРУЧИВАЛСЯ'
 
     data = io.BytesIO()
-    with Image(width=270, height=34) as img:
+    with Image(width=300, height=34) as img:
         with Drawing() as draw:
-            draw.font_size = 10
+            draw.font_size = 11
+            draw.font = 'UbuntuMono-R.ttf'
             draw.fill_color = Color('rgb(220, 220, 220)')
             draw.text(0, 10, text)
             draw(img)
