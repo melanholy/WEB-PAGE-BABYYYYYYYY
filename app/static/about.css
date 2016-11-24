@@ -1,0 +1,63 @@
+h1 {
+    margin: 0;
+    text-align: center;
+}
+
+h2 {
+    font-weight: normal;
+    text-align: center;
+    font-size: 1.8em;
+}
+
+.row {
+    margin: 0 0 20px 0;
+}
+
+figure img {
+    -webkit-transition: transform 0.5s;
+    -moz-transition: transform 0.5s;
+    -ms-transition: transform 0.5s;
+    -o-transition: transform 0.5s;
+    transition: transform 0.5s;
+}
+
+figure img:hover {
+    transform: scale(2.8) translate(5.5%, 32%);
+}
+
+figure {
+    border: 1px solid #444;
+}
+
+figcaption {
+    text-align: center;
+    border-top: 1px solid #444;
+}
+
+.about {
+    padding-left: 10px;
+}
+
+.about p:first-child {
+    margin-top: 0;
+}
+
+.contact-img {
+    max-height: 171px;
+    display: inline;
+    margin-top: 5px;
+}
+
+.contact-wrapper {
+    text-align: center;
+}
+
+.contact-wrapper span {
+    padding-bottom: 10px;
+}
+
+@media (max-width: 767px) {
+    .contact-wrapper {
+        margin-bottom: 20px;
+    }
+}

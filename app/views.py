@@ -350,7 +350,3 @@ def stats():
 
     data.seek(0)
     return send_file(data, mimetype='image/png')
-
-@app.app.route('/contacts')
-def contacts():
-    return render_template('contacts.html', title='Контакты')
