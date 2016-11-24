@@ -1,59 +1,60 @@
 {% extends "base.html" %}
 
 {% block head %}
-<style type="text/css">
-    h1 {
-        margin: 0px 0px 5px 0px;
-    }
-
-    figure img {
-        -webkit-transition: transform 0.5s;
-        -moz-transition: transform 0.5s;
-        -ms-transition: transform 0.5s;
-        -o-transition: transform 0.5s;
-        transition: transform 0.5s;
-    }
-
-    figure img:hover {
-        transform: scale(2.8) translate(5.5%, 32%);
-    }
-
-    figure {
-        border: 1px solid #444;
-        margin: 0 5px 5px 0;
-    }
-
-    figcaption {
-        text-align: center;
-        border-top: 1px solid #444;
-    }
-</style>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='about.css') }}">
 {% endblock %}
 
 {% block body %}
 <h1>Всем здрасьте</h1>
-<figure class="col-sm-4" style="padding: 0;">
-    <div style="overflow: hidden;">
-        <img src="{{ url_for('static', filename='portrait.jpg') }}" alt="Автопортрет" class="img-responsive">
+<section class="row">
+    <h2>Кто я такой?</h2>
+    <figure class="col-sm-5 col-md-4 col-xs-12" style="padding: 0;">
+        <div style="overflow: hidden;">
+            <img src="{{ url_for('static', filename='portrait.jpg') }}" alt="Автопортрет" class="img-responsive">
+        </div>
+        <figcaption>Точный автопортрет</figcaption>
+    </figure>
+    <div class="col-sm-7 col-md-8 col-xs-12 about">
+        <p>
+            Меня зовут Кошара Павел. Я учусь в <a href="http://urfu.ru" target="_blank" class="has-icon" data-icon="{{ url_for('static', filename='urfuicon.png') }}">УрФУ</a> на факультете <a href="http://imkn.urfu.ru/" target="_blank">ИМКН</a> по специальности "Компьютерная безопасность".<br>
+            Дотянул уже до <span style="text-decoration: line-through;">первого</span> <span style="text-decoration: line-through;">второго</span> третьего курса.
+        </p>
+        <p>
+            Я живу хорошо, просто замечательно. У меня все есть, есть свой дом - он теплый.<br>
+            В нем одна комната и кухня.
+        </p>
+        <p>
+            А здоровье мое не очень: то лапы ломит, то хвост отваливается.
+        </p>
+        <p>
+            А на днях я линять начал. Старая шерсть с меня сыплется, хоть в дом не заходи... Зато новая растет - чистая-шелковистая.<br>
+            Так что лохматость у меня повысилась.
+        </p>
+        <span class="pull-right">
+            До свидания, ваш друг - дядя Шарик.
+        </span>
     </div>
-    <figcaption>Точный автопортрет</figcaption>
-</figure>
-<p>
-    Меня зовут Кошара Павел. Я учусь в <a href="http://urfu.ru" target="_blank" class="has-icon" data-icon="{{ url_for('static', filename='urfuicon.png') }}">УрФУ</a> на факультете <a href="http://imkn.urfu.ru/" target="_blank">ИМКН</a> по специальности "Компьютерная безопасность".<br>
-    Дотянул уже до <span style="text-decoration: line-through;">первого</span> <span style="text-decoration: line-through;">второго</span> третьего курса.
-</p>
-<p>
-    Я живу хорошо, просто замечательно. У меня все есть, есть свой дом - он теплый.<br>
-    В нем одна комната и кухня.
-</p>
-<p>
-    А здоровье мое не очень: то лапы ломит, то хвост отваливается.
-</p>
-<p>
-    А на днях я линять начал. Старая шерсть с меня сыплется, хоть в дом не заходи... Зато новая растет - чистая-шелковистая.<br>
-    Так что лохматость у меня повысилась.
-</p>
-<span class="pull-right" style="clear: both;">
-    До свидания, ваш друг - дядя Шарик.
-</span>
+</section>
+<hr>
+<section>
+    <h2>Как меня найти?</h2>
+    <div class="col-sm-4 contact-wrapper">
+        <a href="https://vk.com/4d5354353" target="_blank">
+            <span>Написать телеграмму</span><br>
+            <img class="img-responsive contact-img" src="{{ url_for('static', filename='telegraph.png') }}" alt="Телеграф">
+        </a>
+    </div>
+    <div class="col-sm-4 contact-wrapper">
+        <a href="mailto:irrygan@gmail.com">
+            <span>Отправить голубя</span><br>
+            <img class="img-responsive contact-img" src="{{ url_for('static', filename='pigeon.png') }}" alt="Голубь">
+        </a>
+    </div>
+    <div class="col-sm-4 contact-wrapper">
+        <a href="https://github.com/melanholy" target="_blank">
+            <span>Профиль GitHub</span><br>
+            <img class="img-responsive contact-img" src="{{ url_for('static', filename='sir_octocat.png') }}" alt="Октокот">
+        </a>
+    </div>
+</section>
 {% endblock %}
