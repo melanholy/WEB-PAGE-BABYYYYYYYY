@@ -146,3 +146,5 @@ db
 *.pem
 *.sublime-project
 *.sublime-workspace
+wsgi.*
+dep.sh

@@ -339,10 +339,11 @@ def stats():
     data = io.BytesIO()
     with Image(width=300, height=34) as img:
         with Drawing() as draw:
-            draw.font_size = 11
+            draw.font_size = 12
             draw.font = 'UbuntuMono-R.ttf'
-            draw.fill_color = Color('rgb(220, 220, 220)')
-            draw.text(0, 10, text)
+            draw.fill_color = Color('rgb(230, 230, 230)')
+            for index, line in enumerate(text.split('\n')):
+                draw.text(0, 10 + 11 * index, line)
             draw(img)
         with img.convert('png') as converted:
             converted.save(data)
