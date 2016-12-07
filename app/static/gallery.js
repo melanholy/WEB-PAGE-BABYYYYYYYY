@@ -58,15 +58,12 @@ function sendComment() {
 
     textarea.value = '';
 
-    ajaxSend(
-        '/comment', 'POST', data,
-        function(xhr) {
-            if (xhr.responseText[0] !== '[')
-                document.write(xhr.responseText);
-            else
-                addCommentsToDocument(xhr);
-        }
-    );
+    ajaxSend('/comment', 'POST', data, function(xhr) {
+        if (xhr.responseText[0] !== '[')
+            document.write(xhr.responseText);
+        else
+            addCommentsToDocument(xhr);
+    });
 }
 
 function setPreload(current) {
@@ -77,10 +74,6 @@ function setPreload(current) {
     var imagePreload = document.getElementById('img-preload');
     var nextHref = document.getElementById(next).getAttribute('data-big');
     imagePreload.setAttribute('src', nextHref);
-}
-
-function getPictureName() {
-
 }
 
 function showBigImage(id, pushHistory) {
@@ -190,3 +183,16 @@ function changeState() {
 
 addEvent('popstate', changeState);
 addEvent('load', changeState);
+
+function refreshComments() {
+    var el = document.getElementById('image-big-div');
+    if (el.style.display != 'none' && el.style.display != '') {
+        var currentPicturePath = document.getElementById('image-big').getAttribute('src');
+        var pictureName = currentPicturePath.substring(currentPicturePath.lastIndexOf('/') + 1);
+        getComments(pictureName);
+    }
+
+    setTimeout(refreshComments, 5000);
+}
+
+setTimeout(refreshComments, 5000);
