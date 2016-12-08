@@ -19,6 +19,7 @@ from jinja2 import escape
 
 HACK_DETECTED_MSG = 'Ваша попытка взлома зарегистрирована и направлена куда надо.'
 BLOCKED_USERS = {}
+LAST_FEEDBACK = {}
 IP_RE = re.compile(r'^(\d{1,3}\.){3}\d{1,3}$')
 B_TAG = re.compile(r'&lt;b&gt;(.+?)&lt;/b&gt;')
 I_TAG = re.compile(r'&lt;i&gt;(.+?)&lt;/i&gt;')
@@ -134,13 +135,16 @@ def register():
 def leave_feedback():
     form = FeedbackForm(request.form)
     if request.method == 'POST' and form.validate():
-        app.mongo.db.feedback.save({
-            'from': current_user.username,
-            'text': form.text.data,
-            'date': int(time.time()),
-            'age': form.age.data
-        })
-        return redirect('/feedback')
+        if time.time() - LAST_FEEDBACK.get(current_user.username, 0) > 43200:
+            LAST_FEEDBACK[current_user.username] = time.time()
+            app.mongo.db.feedback.save({
+                'from': current_user.username,
+                'text': form.text.data,
+                'date': int(time.time()),
+                'age': form.age.data
+            })
+            return redirect('/feedback')
+        flash('Разрешается отправлять отзывы только один раз в 12 часов.')
 
     return render_template('leave_feedback.html', title='Оставить отзыв', form=form)
 
