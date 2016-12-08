@@ -68,13 +68,13 @@
     <div id="collapse{{ loop.index }}" class="collapse">
         <form method="POST">
             {{ edit_form.csrf_token }}
-            {{ edit_form.id_(value=record['_id']) }}
-            {{ macros.input(edit_form.text(class_='form-control glow', maxlength='1024', required=True, data=record['text']), 'Новый текст') }}
+            {{ edit_form.edit_id(value=record['_id']) }}
+            {{ macros.input(edit_form.edit_text(class_='form-control glow', maxlength='1024', required=True, data=record['text']), 'Новый текст') }}
             <input type="submit" value="Подтвердить" class="pull-left">
         </form>
         <form method="POST">
             {{ del_form.csrf_token }}
-            {{ del_form.id_(value=record['_id']) }}
+            {{ del_form.del_id(value=record['_id']) }}
             <input type="submit" value="Удалить" class="pull-right">
         </form>
     </div>

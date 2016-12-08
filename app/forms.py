@@ -5,7 +5,7 @@ from wtforms.compat import text_type
 from wtforms import StringField, PasswordField, IntegerField, \
                     HiddenField, validators, ValidationError
 
-FIELD_REQUIRED_MSG = 'Обязательное поле'
+FIELD_REQUIRED_MSG = 'Не было заполнено бязательное поле'
 AUTO = object()
 
 def check_bad_symbols(form, field):
@@ -80,14 +80,20 @@ class FeedbackForm(Form):
 
 class EditFeedbackForm(Form):
     Meta = NoIdAttributeMeta
-    id_ = HiddenField('Id')
-    text = MY_TEXTAREA
+    edit_id = HiddenField('Id', [
+        validators.DataRequired(message=FIELD_REQUIRED_MSG)
+    ])
+    edit_text = MY_TEXTAREA
 
 class CommentForm(Form):
     Meta = NoIdAttributeMeta
-    id_ = HiddenField('Id')
+    id_ = HiddenField('Id', [
+        validators.DataRequired(message=FIELD_REQUIRED_MSG)
+    ])
     text = MY_TEXTAREA
 
 class DeleteFeedbackForm(Form):
     Meta = NoIdAttributeMeta
-    id_ = HiddenField('Id')
+    del_id = HiddenField('Id', [
+        validators.DataRequired(message=FIELD_REQUIRED_MSG)
+    ])

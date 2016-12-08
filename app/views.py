@@ -57,15 +57,15 @@ def register_request():
     if BLOCKED_USERS.get(request.remote_addr):
         del BLOCKED_USERS[request.remote_addr]
 
-    recent_hits_count = app.mongo.db.hits.find({
+    recent_hits_count = app.mongo.db.hits.count({
         'time': {'$gt': time.time() - 10},
         'address': request.remote_addr
-    }).count()
+    })
     if recent_hits_count > 10:
         BLOCKED_USERS[request.remote_addr] = time.time()
         return
 
-    app.mongo.db.hits.save({
+    app.mongo.db.hits.insert_one({
         'time': int(time.time()),
         'address': request.remote_addr,
         'path': request.path,
@@ -78,7 +78,7 @@ def register_request():
         sort=[('$natural', -1)]
     )
     if not last_record or time.time() - last_record['time'] > 1800:
-        app.mongo.db.visits.save({
+        app.mongo.db.visits.insert_one({
             'address': request.remote_addr,
             'time': int(time.time())
         })
@@ -137,7 +137,7 @@ def leave_feedback():
     if request.method == 'POST' and form.validate():
         if time.time() - LAST_FEEDBACK.get(current_user.username, 0) > 43200:
             LAST_FEEDBACK[current_user.username] = time.time()
-            app.mongo.db.feedback.save({
+            app.mongo.db.feedback.insert_one({
                 'from': current_user.username,
                 'text': form.text.data,
                 'date': int(time.time()),
@@ -177,24 +177,29 @@ def logout():
 def user_page():
     edit_form = EditFeedbackForm()
     del_form = DeleteFeedbackForm()
-    if request.method == 'POST' and del_form.validate():
-        record = app.mongo.db.feedback.find_one({'_id': ObjectId(del_form.id_.data)})
-        if record and record['from'] == current_user.username:
-            app.mongo.db.feedback.remove({'_id': ObjectId(del_form.id_.data)})
-        else:
-            return HACK_DETECTED_MSG
-    elif request.method == 'POST' and edit_form.validate():
-        record = app.mongo.db.feedback.find_one({'_id': ObjectId(edit_form.id_.data)})
+    if request.method == 'POST' and 'edit_id' in request.form and edit_form.validate():
+        id_ = ObjectId(edit_form.edit_id.data)
+        record = app.mongo.db.feedback.find_one({'_id': id_})
         if record and record['from'] == current_user.username:
             app.mongo.db.feedback.update(
-                {'_id': ObjectId(edit_form.id_.data)},
-                {'$set': {'text': edit_form.text.data}}
+                {'_id': id_},
+                {'$set': {'text': edit_form.edit_text.data}}
             )
         else:
             return HACK_DETECTED_MSG
-    cursor = app.mongo.db.feedback.find({'from': current_user.username})
+    elif request.method == 'POST' and 'del_id' in request.form and del_form.validate():
+        id_ = ObjectId(del_form.del_id.data)
+        record = app.mongo.db.feedback.find_one({'_id': id_})
+        if record and record['from'] == current_user.username:
+            app.mongo.db.feedback.delete_one({'_id': id_})
+        else:
+            return HACK_DETECTED_MSG
+    records = [x for x in app.mongo.db.feedback.find({'from': current_user.username})]
+    for record in records:
+        if 'date' in record and isinstance(record['date'], int):
+            record['date'] = get_time_str(record['date'])
     return render_template(
-        'user.html', title='Настройки', feedback=cursor,
+        'user.html', title='Настройки', feedback=records,
         edit_form=edit_form, del_form=del_form
     )
 
@@ -265,7 +270,7 @@ def comment():
                not path.endswith('.jpg')):
                 return HACK_DETECTED_MSG
             else:
-                app.mongo.db.comments.save({'filename': form.id_.data, 'comments': []})
+                app.mongo.db.comments.insert_one({'filename': form.id_.data, 'comments': []})
         app.mongo.db.comments.update(
             {'filename': form.id_.data},
             {'$push': {'comments': {
@@ -299,15 +304,15 @@ def get_visit_info_str():
     beginning_of_day = datetime.datetime.combine(now.date(), datetime.time(0))
     passed_today = (now - beginning_of_day).seconds
 
-    visits_today = str(app.mongo.db.visits.find({
+    visits_today = str(app.mongo.db.visits.count({
         'time': {'$gt': time.time() - passed_today}
-    }).count())
-    visits_total = str(app.mongo.db.visits.find().count())
+    }))
+    visits_total = str(app.mongo.db.visits.count())
 
-    hits_today = str(app.mongo.db.hits.find({
+    hits_today = str(app.mongo.db.hits.count({
         'time': {'$gt': time.time() - passed_today}
-    }).count())
-    hits_total = str(app.mongo.db.hits.find().count())
+    }))
+    hits_total = str(app.mongo.db.hits.count())
     last_hits = [x for x in app.mongo.db.hits.find({
         'address': request.remote_addr,
         'path': request.args['path']
