@@ -148,3 +148,4 @@ db
 *.sublime-workspace
 wsgi.*
 dep.sh
+config.py
