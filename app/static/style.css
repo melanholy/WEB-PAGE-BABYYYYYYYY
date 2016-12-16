@@ -6,6 +6,10 @@ body {
     background: linear-gradient(to bottom, #222, #282828) fixed;
 }
 
+.row {
+    margin: 0;
+}
+
 .top-stick {
     position: absolute;
     top: 10px;

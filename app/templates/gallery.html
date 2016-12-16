@@ -20,12 +20,15 @@
 <div class="modal modal-dialog modal-lg modal-xl modal-md modal-xs" id="image-big-div">
     <div style="height: 100%; overflow: auto;" class="msb" id="scroll-wrapper">
         <div class="col-sm-12 col-xs-12 col-md-8" id="big-img-wrapper">
-            <button onclick="setAsBackground();">Сделать фоновой</button>
             <div id="for-alignment"></div>
             <img id="image-big" src="#" alt="Большое изображение">
             <img id="img-preload" style="display: none;" alt="если вы это читаете, сделайте мне бутерброд" src="#">
         </div>
         <div class="col-sm-12 col-xs-12 col-md-4" id="comments-div">
+            <div id="likes">
+                <button onclick="setAsBackground();" class="pull-right">Сделать фоновой</button>
+                <button onclick="like();" id="like-button"></button>
+            </div>
             <div id="comments" class="msb">
 
             </div>
@@ -42,11 +45,15 @@
         </div>
     </div>
 </div>
+<div class="row">
 {% for i in range(min_images|length ) %}
     <div class="col-md-2 col-sm-3 col-xs-4 col-lg-2 col-el-2 img-wrapper">
 	   <img onclick="showBigImage('{{ i }}');" alt="loading" class="img-responsive gal-img" data-big="{{ images[i] }}" src="{{ min_images[i] }}" id="{{ i }}">
     </div>
 {% endfor %}
+</div>
+<!--<button style="clear: both; margin-left: 8px;" onclick="downloadPicturesAsXml();">Скачать список фото в XML</button>
+<iframe id="download" style="display: none;"></iframe>-->
 {% endblock %}
 
 {% block scripts %}

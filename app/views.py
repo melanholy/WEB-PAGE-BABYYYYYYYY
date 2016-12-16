@@ -359,3 +359,32 @@ def stats():
 
     data.seek(0)
     return send_file(data, mimetype='image/png')
+
+@app.app.route('/like', methods=['GET', 'POST'])
+def like():
+    print(request.form)
+    if request.method == 'POST' and 'filename' in request.form:
+        record = app.mongo.db.likes.find_one({ 'filename': request.form['filename'] })
+        if not record:
+            app.mongo.db.likes.insert_one({
+                'filename': request.form['filename'],
+                'count': 0
+            })
+            count = 0
+        else:
+            count = record['count']
+        count += 1
+        app.mongo.db.likes.update(
+            { 'filename': request.form['filename'] },
+            { '$set': { 'count': count } }
+        )
+
+        return str(count)
+    elif request.method == 'GET' and 'filename' in request.args:
+        record = app.mongo.db.likes.find_one({ 'filename': request.args['filename'] })
+        if not record:
+            count = 0
+        else:
+            count = record['count']
+
+        return str(count)

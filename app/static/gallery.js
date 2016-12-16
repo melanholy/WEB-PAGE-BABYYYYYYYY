@@ -96,6 +96,35 @@ function showBigImage(id, pushHistory) {
     document.getElementsByName('id_')[0].setAttribute('value', pictureName);
 
     getComments(pictureName);
+    getLikes(pictureName);
+}
+
+function setLikesCount(xhr) {
+    document.getElementById('like-button').innerHTML = '👊 Ничё так &nbsp;' + xhr.responseText;
+}
+
+function getLikes(filename) {
+    var path = '/like?filename=' + encodeURIComponent(filename);
+    ajaxSend(path, 'GET', [], setLikesCount);
+}
+
+function getCurrentDisplayedPicture() {
+    var el = document.getElementById('image-big-div');
+    if (el.style.display != 'none' && el.style.display != '') {
+        var currentPicturePath = document.getElementById('image-big').getAttribute('src');
+        return currentPicturePath.substring(currentPicturePath.lastIndexOf('/') + 1);
+    }
+
+    return undefined;
+}
+
+function like() {
+    var csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    var data = {
+        'filename': getCurrentDisplayedPicture(),
+        'csrf_token': csrf
+    };
+    ajaxSend('/like', 'POST', data, setLikesCount);
 }
 
 function setAsBackground() {
@@ -184,15 +213,14 @@ function changeState() {
 addEvent('popstate', changeState);
 addEvent('load', changeState);
 
-function refreshComments() {
-    var el = document.getElementById('image-big-div');
-    if (el.style.display != 'none' && el.style.display != '') {
-        var currentPicturePath = document.getElementById('image-big').getAttribute('src');
-        var pictureName = currentPicturePath.substring(currentPicturePath.lastIndexOf('/') + 1);
+function refresh() {
+    var pictureName = getCurrentDisplayedPicture();
+    if (pictureName) {
         getComments(pictureName);
+        getLikes(pictureName);
     }
 
-    setTimeout(refreshComments, 5000);
+    setTimeout(refresh, 5000);
 }
 
-setTimeout(refreshComments, 5000);
+setTimeout(refresh, 5000);
