@@ -104,8 +104,10 @@ function setLikesCount(xhr) {
 }
 
 function getLikes(filename) {
-    var path = '/like?filename=' + encodeURIComponent(filename);
-    ajaxSend(path, 'GET', [], setLikesCount);
+    if (document.getElementById('like-button')) {
+        var path = '/like?filename=' + encodeURIComponent(filename);
+        ajaxSend(path, 'GET', [], setLikesCount);
+    }
 }
 
 function getCurrentDisplayedPicture() {

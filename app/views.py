@@ -52,16 +52,16 @@ def after_request(response):
 
 def register_request():
     if BLOCKED_USERS.get(request.remote_addr) and \
-       time.time() - BLOCKED_USERS[request.remote_addr] < 120:
+       time.time() - BLOCKED_USERS[request.remote_addr] < 600:
         return
     if BLOCKED_USERS.get(request.remote_addr):
         del BLOCKED_USERS[request.remote_addr]
 
     recent_hits_count = app.mongo.db.hits.count({
-        'time': {'$gt': time.time() - 10},
+        'time': { '$gt': time.time() - 20 },
         'address': request.remote_addr
     })
-    if recent_hits_count > 10:
+    if recent_hits_count > 60:
         BLOCKED_USERS[request.remote_addr] = time.time()
         return
 
@@ -361,30 +361,22 @@ def stats():
     return send_file(data, mimetype='image/png')
 
 @app.app.route('/like', methods=['GET', 'POST'])
+@login_required
 def like():
-    print(request.form)
     if request.method == 'POST' and 'filename' in request.form:
-        record = app.mongo.db.likes.find_one({ 'filename': request.form['filename'] })
+        picture = request.form['filename']
+        data = {
+            'filename': picture,
+            'user': current_user.username
+        }
+        record = app.mongo.db.likes.find_one(data)
         if not record:
-            app.mongo.db.likes.insert_one({
-                'filename': request.form['filename'],
-                'count': 0
-            })
-            count = 0
+            app.mongo.db.likes.insert_one(data)
         else:
-            count = record['count']
-        count += 1
-        app.mongo.db.likes.update(
-            { 'filename': request.form['filename'] },
-            { '$set': { 'count': count } }
-        )
+            app.mongo.db.likes.delete_one(data)
 
-        return str(count)
+        return str(app.mongo.db.likes.count({ 'filename': picture }))
     elif request.method == 'GET' and 'filename' in request.args:
-        record = app.mongo.db.likes.find_one({ 'filename': request.args['filename'] })
-        if not record:
-            count = 0
-        else:
-            count = record['count']
+        return str(app.mongo.db.likes.count({ 'filename': request.args['filename'] }))
 
-        return str(count)
+    return HACK_DETECTED_MSG

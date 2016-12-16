@@ -27,7 +27,9 @@
         <div class="col-sm-12 col-xs-12 col-md-4" id="comments-div">
             <div id="likes">
                 <button onclick="setAsBackground();" class="pull-right">Сделать фоновой</button>
-                <button onclick="like();" id="like-button"></button>
+                {% if current_user.is_authenticated %}
+                    <button onclick="like();" id="like-button"></button>
+                {% endif %}
             </div>
             <div id="comments" class="msb">
 
@@ -38,7 +40,7 @@
                     {{ form.text(class_='glow', required=True, style='resize: none; height: 106px; width: 100%;') }}
                     <button onclick="sendComment();" style="height: 20px; width: 100%;">Отправить</button>
                 {% else %}
-                    <textarea disabled style="resize: none; height: 106px; width: 100%;">Войдите чтобы получить возможность комментировать</textarea>
+                    <textarea disabled style="resize: none; height: 106px; width: 100%;">Войдите чтобы получить возможность комментировать и оставлять отметки "Ничё так"</textarea>
                     <button disabled style="height: 20px; width: 100%;">Отправить</button>
                 {% endif %}
             </div>
