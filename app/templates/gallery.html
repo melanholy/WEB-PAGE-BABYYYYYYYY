@@ -40,7 +40,9 @@
                     {{ form.text(class_='glow', required=True, style='resize: none; height: 106px; width: 100%;') }}
                     <button onclick="sendComment();" style="height: 20px; width: 100%;">Отправить</button>
                 {% else %}
-                    <textarea disabled style="resize: none; height: 106px; width: 100%;">Войдите чтобы получить возможность комментировать и оставлять отметки "Ничё так"</textarea>
+                    <textarea disabled style="resize: none; height: 106px; width: 100%;">
+                        Войдите чтобы получить возможность комментировать и оставлять отметки "Ничё так"
+                    </textarea>
                     <button disabled style="height: 20px; width: 100%;">Отправить</button>
                 {% endif %}
             </div>
@@ -54,8 +56,8 @@
     </div>
 {% endfor %}
 </div>
-<!--<button style="clear: both; margin-left: 8px;" onclick="downloadPicturesAsXml();">Скачать список фото в XML</button>
-<iframe id="download" style="display: none;"></iframe>-->
+<button style="clear: both; margin-left: 8px;" onclick="downloadPicturesAsXml();">Скачать список фото в XML</button>
+<iframe id="download" style="display: none;"></iframe>
 {% endblock %}
 
 {% block scripts %}

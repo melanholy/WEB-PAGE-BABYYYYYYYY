@@ -226,3 +226,7 @@ function refresh() {
 }
 
 setTimeout(refresh, 5000);
+
+function downloadPicturesAsXml() {
+    download.src = '/pic.xml';
+}

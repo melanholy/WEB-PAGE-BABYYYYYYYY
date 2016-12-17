@@ -4,13 +4,15 @@ import os
 import io
 import re
 import json
-import app
 from functools import wraps, update_wrapper
+
+import app
 from app.models import User
 from app.forms import LoginForm, RegisterForm, FeedbackForm, EditFeedbackForm, \
                       CommentForm, DeleteFeedbackForm
+from lxml import etree
 from flask import render_template, send_from_directory, redirect, request, \
-                  flash, send_file, make_response
+                  flash, send_file, make_response, Response
 from flask_login import login_required, login_user, logout_user, current_user
 from wand.image import Image
 from wand.drawing import Drawing, Color
@@ -58,7 +60,7 @@ def register_request():
         del BLOCKED_USERS[request.remote_addr]
 
     recent_hits_count = app.mongo.db.hits.count({
-        'time': { '$gt': time.time() - 20 },
+        'time': {'$gt': time.time() - 20},
         'address': request.remote_addr
     })
     if recent_hits_count > 60:
@@ -351,8 +353,8 @@ def stats():
             draw.font_size = 12
             draw.font = 'UbuntuMono-R.ttf'
             draw.fill_color = Color('rgb(230, 230, 230)')
-            for index, line in enumerate(text.split('\n')):
-                draw.text(0, 10 + 11 * index, line)
+            for i, line in enumerate(text.split('\n')):
+                draw.text(0, 10 + 11 * i, line)
             draw(img)
         with img.convert('png') as converted:
             converted.save(data)
@@ -375,8 +377,37 @@ def like():
         else:
             app.mongo.db.likes.delete_one(data)
 
-        return str(app.mongo.db.likes.count({ 'filename': picture }))
+        return str(app.mongo.db.likes.count({'filename': picture}))
     elif request.method == 'GET' and 'filename' in request.args:
-        return str(app.mongo.db.likes.count({ 'filename': request.args['filename'] }))
+        return str(app.mongo.db.likes.count({'filename': request.args['filename']}))
 
     return HACK_DETECTED_MSG
+
+@app.app.route('/pic.xml')
+def picxml():
+    root = etree.Element('root')
+    images = [x for x in os.listdir('app/images') if not x.startswith('min')]
+    for image in images:
+        image_el = etree.Element('image')
+
+        path = etree.Element('path')
+        path.text = '/images/' + image
+
+        likes = etree.Element('likes')
+        likes.text = str(app.mongo.db.likes.count({'filename': image}))
+
+        comments = etree.Element('comments')
+        record = app.mongo.db.comments.find_one({'filename': image})
+        if not record:
+            count = 0
+        else:
+            count = len(record['comments'])
+        comments.text = str(count)
+
+        image_el.append(path)
+        image_el.append(likes)
+        image_el.append(comments)
+        root.append(image_el)
+
+    result = etree.tostring(root, pretty_print=True, xml_declaration=True)
+    return Response(result, mimetype='application/octet-stream')
