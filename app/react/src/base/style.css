@@ -137,3 +137,11 @@ a:hover {
 .date {
     font-size: 9px;
 }
+
+.not-found-body {
+    text-align: center;
+}
+
+.not-found-header {
+    padding: 20px 0 10px 0;
+}

@@ -5,7 +5,7 @@ export default class About extends React.Component {
         return <div>
             <h2 className="about-row-header">Кто я такой?</h2>
             <figure className="col-sm-5 col-md-4 col-xs-12 portrait">
-                <div style="overflow: hidden;">
+                <div className="portrait-img-wrapper">
                     <img src="{{ url_for('static', filename='portrait.jpg') }}" alt="Автопортрет" className="img-responsive" />
                 </div>
                 <figcaption>Точный автопортрет</figcaption>
@@ -19,9 +19,9 @@ export default class About extends React.Component {
                     по специальности "Компьютерная безопасность".
                     <br />
                     Дотянул уже до
-                    <span style="text-decoration: line-through;">первого</span>
-                    <span style="text-decoration: line-through;">второго</span>
-                    <span style="text-decoration: line-through;">третьего</span>
+                    <span className="past-course">первого</span>
+                    <span className="past-course">второго</span>
+                    <span className="past-course">третьего</span>
                     четвертого курса.
                 </p>
                 <p>

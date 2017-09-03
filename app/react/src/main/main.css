@@ -13,17 +13,21 @@
     padding: 0 0 20px 0;
 }
 
+.portrait {
+    border: 1px solid #444;
+    padding: 0;
+}
+
+.portrait-img-wrapper {
+    overflow: hidden;
+}
+
 .portrait img {
     transition: transform 0.5s;
 }
 
 .portrait img:hover {
     transform: scale(2.8) translate(5.5%, 32%);
-}
-
-.portrait {
-    border: 1px solid #444;
-    padding: 0;
 }
 
 .portrait figcaption {
@@ -37,6 +41,10 @@
 
 .about p:first-child {
     margin-top: 0;
+}
+
+.past-course {
+    text-decoration: line-through;
 }
 
 .contact-img {
