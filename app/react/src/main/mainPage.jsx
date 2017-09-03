@@ -1,6 +1,7 @@
 import React from 'react';
 import Contacts from './contacts.jsx';
 import Bio from './bio.jsx';
+import './main.css';
 
 export default class MainPage extends React.Component {
     render() {

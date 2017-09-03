@@ -6,7 +6,7 @@ class ContactLink extends React.Component {
             <a href="https://vk.com/4d5354353" target="_blank">
                 <span>{this.props.caption}</span>
                 <br />
-                <img className="img-responsive contact-img" src={this.props.src} alt="Телеграф" />
+                <img className="img-responsive contact-img" src={this.props.src} alt={this.props.alt} />
             </a>
         </div>;
     }
@@ -16,9 +16,9 @@ export default class Contacts extends React.Component {
     render() {
         return <div>
             <h2 className="about-row-header">Как меня найти?</h2>
-            <ContactLink caption="Написать телеграмму" src="{{ url_for('static', filename='telegraph.png') }}" />
-            <ContactLink caption="Отправить голубя" src="{{ url_for('static', filename='pigeon.png') }}" />
-            <ContactLink caption="Профиль GitHub" src="{{ url_for('static', filename='sir_octocat.png') }}" />
+            <ContactLink caption="Написать телеграмму" src="/static/telegraph.png" alt="Телеграф" />
+            <ContactLink caption="Отправить голубя" src="/static/pigeon.png" alt="Почтовый голубь" />
+            <ContactLink caption="Профиль GitHub" src="/static/sir_octocat.png" alt="Октокот" />
         </div>;
     }
 }
