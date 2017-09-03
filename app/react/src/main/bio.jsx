@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
 export default class About extends React.Component {
     render() {
-        return <section className="row">
-            <h2>Кто я такой?</h2>
-            <figure className="col-sm-5 col-md-4 col-xs-12" style="padding: 0;">
+        return <div>
+            <h2 className="about-row-header">Кто я такой?</h2>
+            <figure className="col-sm-5 col-md-4 col-xs-12 portrait">
                 <div style="overflow: hidden;">
                     <img src="{{ url_for('static', filename='portrait.jpg') }}" alt="Автопортрет" className="img-responsive" />
                 </div>
@@ -15,13 +15,14 @@ export default class About extends React.Component {
                     Меня зовут Кошара Павел. Я учусь в
                     <a href="http://urfu.ru" target="_blank">УрФУ</a>
                     на факультете
-                    <a href="http://imkn.urfu.ru/" target="_blank">ИМКН</a>
+                    <a href="http://imkn.urfu.ru/" target="_blank">ИЕНиМ</a>
                     по специальности "Компьютерная безопасность".
                     <br />
                     Дотянул уже до
                     <span style="text-decoration: line-through;">первого</span>
                     <span style="text-decoration: line-through;">второго</span>
-                    третьего курса.
+                    <span style="text-decoration: line-through;">третьего</span>
+                    четвертого курса.
                 </p>
                 <p>
                     Я живу хорошо, просто замечательно. У меня все есть, есть свой дом - он теплый.
@@ -38,9 +39,9 @@ export default class About extends React.Component {
                     Так что лохматость у меня повысилась.
                 </p>
                 <span className="pull-right">
-                        До свидания, ваш друг - дядя Шарик.
-                    </span>
+                    До свидания, ваш друг - дядя Шарик.
+                </span>
             </div>
-        </section>;
+        </div>;
     }
 }

@@ -29,12 +29,8 @@ BASE_PAGE = '''
     <link rel="stylesheet" href="/static/style.css" type="text/css">
 </head>
 <body>
-    <main class="container">
-        <div class="content">
-            <div id="root"></div>
-        </div>
-    </main>
-    <script src="/static/scripts.js"></script>
+    <div id="root"></div>
+    <script src="/static/bundle.js"></script>
 </body>
 </html>
 '''

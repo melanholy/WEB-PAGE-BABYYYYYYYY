@@ -44,10 +44,6 @@
     border-left: none;
 }
 
-.flashes li {
-    font-size: 10px;
-}
-
 button, input, textarea {
     border-radius: 0;
     background: #292929;

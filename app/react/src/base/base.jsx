@@ -3,11 +3,15 @@ import Header from './header.jsx';
 import Aside from './aside.jsx';
 
 export default class Base extends React.Component {
-    render(props) {
+    render() {
         return <div>
             <Header />
             <Aside />
-            {props.body}
+            <main className="container">
+                <div className="content">
+                    {this.props.body}
+                </div>
+            </main>
         </div>;
     }
 }

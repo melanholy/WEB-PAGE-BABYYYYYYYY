@@ -13,9 +13,9 @@ export default class Aside extends React.Component {
     render() {
         return <aside>
             <a href="/leave_feedback">
-                <div class="top-stick" id="feedback">Оставить отзыв</div>
+                <div className="top-stick feedback-link">Оставить отзыв</div>
             </a>
-            <div className="top-stick" id="music" onClick={e => music()}>
+            <div className="top-stick music-button" onClick={e => music()}>
                 <audio id="player">
                     <source src="/static/music.mp3" type="audio/mpeg" />
                 </audio>

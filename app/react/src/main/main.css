@@ -1,35 +1,32 @@
-h1 {
+.about-header {
     margin: 0;
     text-align: center;
 }
 
-h2 {
+.about-row-header {
     font-weight: normal;
     text-align: center;
     font-size: 1.8em;
 }
 
 .row {
-    margin: 0 0 20px 0;
+    padding: 0 0 20px 0;
 }
 
-figure img {
-    -webkit-transition: transform 0.5s;
-    -moz-transition: transform 0.5s;
-    -ms-transition: transform 0.5s;
-    -o-transition: transform 0.5s;
+.portrait img {
     transition: transform 0.5s;
 }
 
-figure img:hover {
+.portrait img:hover {
     transform: scale(2.8) translate(5.5%, 32%);
 }
 
-figure {
+.portrait {
     border: 1px solid #444;
+    padding: 0;
 }
 
-figcaption {
+.portrait figcaption {
     text-align: center;
     border-top: 1px solid #444;
 }

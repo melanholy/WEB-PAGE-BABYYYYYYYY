@@ -149,3 +149,5 @@ db
 config.py
 node_modules/
 .idea/
+app/static/bundle.js
+app/static/bundle.css

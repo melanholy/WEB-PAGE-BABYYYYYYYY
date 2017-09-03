@@ -2,7 +2,6 @@ body {
     color: #999;
     font-family: Verdana, sans-serif;
     font-size: 9pt;
-    background: #222; /* для ослика */
     background: linear-gradient(to bottom, #222, #282828) fixed;
 }
 
@@ -17,22 +16,22 @@ body {
     border: 1px solid #444;
 }
 
-#feedback {
+.feedback-link {
     padding: 5px 10px;
     font-size: 9px;
     border-right: none;
     right: 0;
 }
 
-#music {
+.music-button {
     left: 0;
     padding: 0 5px;
     cursor: pointer;
     border-left: none;
 }
 
-#stats {
-    margin: 2px 0 3px 0;
+.stats {
+    margin-bottom: 2px;
 }
 
 hr {
@@ -47,18 +46,17 @@ h1 {
 }
 
 header {
-    margin-bottom: 10px;
+    padding-bottom: 20px;
 }
 
 @media(max-width:788px){
     header {
-        margin-top: 35px;
+        padding-top: 35px;
     }
 }
 
 header ul {
-    padding-left: 0;
-    margin: 0 0 10px 0;
+    padding: 0;
 }
 
 header li {
@@ -81,7 +79,7 @@ header li:hover {
     background: #292929;
 }
 
-header a {
+header ul a {
     display: block;
     padding: 2px 0;
 }
@@ -116,7 +114,7 @@ a {
 }
 
 a:hover {
-    color: yellowgreen;
+    color: #9ACD32;
     text-decoration: none;
 }
 
