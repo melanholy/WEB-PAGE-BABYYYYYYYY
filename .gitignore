@@ -147,3 +147,5 @@ db
 *.sublime-project
 *.sublime-workspace
 config.py
+node_modules/
+.idea/

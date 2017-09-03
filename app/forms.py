@@ -1,5 +1,5 @@
 from html import escape
-from flask_wtf import Form
+from sanic_wtf import SanicForm
 from wtforms.widgets import HTMLString, html_params
 from wtforms.compat import text_type
 from wtforms import StringField, PasswordField, IntegerField, \
@@ -35,7 +35,7 @@ class TextArea(object):
             escape(text_type(data), quote=False)
         ))
 
-class LoginForm(Form):
+class LoginForm(SanicForm):
     Meta = NoIdAttributeMeta
     username = StringField('Username', [
         validators.Length(min=1, max=25, message='Максимальная длина имени - 25 символов.'),
@@ -45,7 +45,7 @@ class LoginForm(Form):
         validators.DataRequired(message=FIELD_REQUIRED_MSG)
     ])
 
-class RegisterForm(Form):
+class RegisterForm(SanicForm):
     Meta = NoIdAttributeMeta
     username = StringField('Username', [
         validators.Length(min=1, max=25, message='Максимальная длина имени - 25 символов.'),
@@ -70,7 +70,7 @@ MY_TEXTAREA = StringField(
     widget=TextArea()
 )
 
-class FeedbackForm(Form):
+class FeedbackForm(SanicForm):
     Meta = NoIdAttributeMeta
     age = IntegerField('Age', [
         validators.DataRequired(message=FIELD_REQUIRED_MSG),
@@ -78,21 +78,21 @@ class FeedbackForm(Form):
     ])
     text = MY_TEXTAREA
 
-class EditFeedbackForm(Form):
+class EditFeedbackForm(SanicForm):
     Meta = NoIdAttributeMeta
     edit_id = HiddenField('Id', [
         validators.DataRequired(message=FIELD_REQUIRED_MSG)
     ])
     edit_text = MY_TEXTAREA
 
-class CommentForm(Form):
+class CommentForm(SanicForm):
     Meta = NoIdAttributeMeta
     id_ = HiddenField('Id', [
         validators.DataRequired(message=FIELD_REQUIRED_MSG)
     ])
     text = MY_TEXTAREA
 
-class DeleteFeedbackForm(Form):
+class DeleteFeedbackForm(SanicForm):
     Meta = NoIdAttributeMeta
     del_id = HiddenField('Id', [
         validators.DataRequired(message=FIELD_REQUIRED_MSG)

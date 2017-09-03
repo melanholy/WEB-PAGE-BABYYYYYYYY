@@ -1,25 +1,17 @@
-from flask import Flask
-from flask_login import LoginManager
-from flask_pymongo import PyMongo
-from flask_wtf import CsrfProtect
+import asyncio
+import uvloop
+from sanic import Sanic
+from sanic_auth import Auth
+from motor.motor_asyncio import AsyncIOMotorClient
 
-app = Flask(__name__, static_folder='static')
-app.config.from_object('config')
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+mongo = AsyncIOMotorClient('mongodb://localhost:27017')
 
-login_manager = LoginManager(app)
-login_manager.login_view = '/login'
-login_manager.login_message = 'Пожалуйста, войдите для доступа к этой странице.'
+app = Sanic(__name__)
+app.static('/static', './app/static')
+auth = Auth(app)
 
-mongo = PyMongo(app)
-
-CsrfProtect(app)
-
-from app.models import User
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get_by_id(user_id)
+BLOCKED_USERS = {}
+LAST_FEEDBACK = {}
 
 from app import views
-
-url_map = [x.rule for x in app.url_map.iter_rules()]
