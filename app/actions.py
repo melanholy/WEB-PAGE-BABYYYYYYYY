@@ -64,7 +64,7 @@ async def register_request(request):
 async def get_visit_info(request):
     beginning_of_day = datetime.datetime.combine(
         datetime.datetime.now(),
-        datetime.datetime.time(0)
+        datetime.time(0)
     ).timestamp()
 
     visits_today = str(await mongo.app.visits.count({

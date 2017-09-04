@@ -5,7 +5,7 @@ from wtforms.compat import text_type
 from wtforms import StringField, PasswordField, IntegerField, \
                     HiddenField, validators, ValidationError
 
-FIELD_REQUIRED_MSG = 'Не было заполнено бязательное поле'
+FIELD_REQUIRED_MSG = 'Не было заполнено обязательное поле'
 AUTO = object()
 
 def check_bad_symbols(form, field):

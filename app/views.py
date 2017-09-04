@@ -3,10 +3,11 @@ import re
 from datetime import datetime
 from functools import wraps
 
-from app import app, auth, BLOCKED_USERS
+from app import app, auth, BLOCKED_USERS, PAGE_TEMPLATE
 from app.actions import register_request, get_visit_info
 from sanic import response
 from sanic.exceptions import NotFound, ServerError
+from wtforms.csrf import generate_csrf
 from wand.image import Image
 from wand.drawing import Drawing, Color
 
@@ -16,27 +17,10 @@ SITE_MAP = {
     '/', '/login', '/404', '/register', '/feedback', '/leave_feedback', '/user',
     '/gallery', '/gallery/<img_id:int>', '/stuff'
 }
-BASE_PAGE = '''
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="">
-    <title>{}</title>
-    <link rel="shortcut icon" href="/static/favicon.ico">
-    <link rel="stylesheet" href="/static/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="/static/style.css" type="text/css">
-</head>
-<body>
-    <div id="root"></div>
-    <script src="/static/bundle.js"></script>
-</body>
-</html>
-'''
 
-def render(title):
-    return response.html(BASE_PAGE.format(title))
+def render(title, status=200):
+    page = PAGE_TEMPLATE.format(title, generate_csrf)
+    return response.html(page, status=status)
 
 def nocache():
     def decorator(view):
@@ -70,16 +54,20 @@ async def after_request(request, resp):
         await register_request(request)
 
 @app.exception(NotFound)
-async def not_found(request, exception):
-    return render('Четыреста четыре')
+async def not_found_handler(request, exception):
+    return response.redirect(app.url_for('not_found'))
 
 @app.exception(ServerError)
 async def handle_error(request, exception):
-    return response.text(HACK_DETECTED_MSG)
+    return response.text(HACK_DETECTED_MSG, status=418)
 
 @app.route('/')
 async def index(request):
     return render('Обо мне')
+
+@app.route('/404')
+async def not_found(request):
+    return render('Четыреста четыре', 404)
 
 @app.route('/login')
 async def login(request):
