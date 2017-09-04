@@ -6,16 +6,16 @@ export default class About extends React.Component {
             <h2 className="about-row-header">Кто я такой?</h2>
             <figure className="col-sm-5 col-md-4 col-xs-12 portrait">
                 <div className="portrait-img-wrapper">
-                    <img src="{{ url_for('static', filename='portrait.jpg') }}" alt="Автопортрет" className="img-responsive" />
+                    <img src="/static/portrait.jpg" alt="Автопортрет" className="img-responsive" />
                 </div>
                 <figcaption>Точный автопортрет</figcaption>
             </figure>
             <div className="col-sm-7 col-md-8 col-xs-12 about">
                 <p>
                     Меня зовут Кошара Павел. Я учусь в
-                    <a href="http://urfu.ru" target="_blank">УрФУ</a>
+                    <a href="http://urfu.ru" target="_blank"> УрФУ </a>
                     на факультете
-                    <a href="http://imkn.urfu.ru/" target="_blank">ИЕНиМ</a>
+                    <a href="http://imkn.urfu.ru/" target="_blank"> ИЕНиМ </a>
                     по специальности "Компьютерная безопасность".
                     <br />
                     Дотянул уже до

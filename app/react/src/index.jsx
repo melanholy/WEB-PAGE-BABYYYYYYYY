@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Base from './base/base.jsx';
+import Base from './base/baseLayout.jsx';
 import Router from './router.jsx';
 
 console.log('YOU WANT A DWARF?\r\n\
