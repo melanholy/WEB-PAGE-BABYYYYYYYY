@@ -7,7 +7,6 @@ from app import app, auth, BLOCKED_USERS, PAGE_TEMPLATE
 from app.actions import register_request, get_visit_info
 from sanic import response
 from sanic.exceptions import NotFound, ServerError
-from wtforms.csrf import generate_csrf
 from wand.image import Image
 from wand.drawing import Drawing, Color
 
@@ -19,7 +18,7 @@ SITE_MAP = {
 }
 
 def render(title, status=200):
-    page = PAGE_TEMPLATE.format(title, generate_csrf)
+    page = PAGE_TEMPLATE.format(title, '')
     return response.html(page, status=status)
 
 def nocache():
@@ -114,9 +113,9 @@ async def stats(request):
         raise ServerError("", status_code=400)
 
     if request.ip not in BLOCKED_USERS:
-        text = get_visit_info(request)
+        info_lines = await get_visit_info(request)
     else:
-        text = 'ДОНАКРУЧИВАЛСЯ'
+        info_lines = ['ДОНАКРУЧИВАЛСЯ']
 
     data = io.BytesIO()
     with Image(width=300, height=34) as img:
@@ -124,7 +123,7 @@ async def stats(request):
             draw.font_size = 12
             draw.font = 'UbuntuMono-R.ttf'
             draw.fill_color = Color('rgb(230, 230, 230)')
-            for i, line in enumerate(text):
+            for i, line in enumerate(info_lines):
                 draw.text(0, 10 + 11 * i, line)
             draw(img)
         with img.convert('png') as converted:

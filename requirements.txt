@@ -1,5 +1,6 @@
 sanic
 sanic-auth
+sanic-wtf
 motor
 Wand
 Pillow
